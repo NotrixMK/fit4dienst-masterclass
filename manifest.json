@@ -1,7 +1,7 @@
 {
-  "name": "Fit4Dienst Masterclass Trainer",
+  "name": "Fit4Dienst Trainer",
   "short_name": "Fit4Dienst",
-  "description": "Interaktiver Masterclass Trainer für BGA-Analyse und Beatmung — Fit4Dienst",
+  "description": "Interaktiver Trainer für BGA-Analyse und Beatmung — Fit4Dienst",
   "start_url": "./Fit4Dienst-Masterclass.html",
   "scope": "./",
   "display": "standalone",
