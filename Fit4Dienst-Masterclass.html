@@ -9,8 +9,8 @@
 <link rel="manifest" href="manifest.json">
 
 <!-- Theme & Status Bar -->
-<meta name="theme-color" content="#0D9488">
-<meta name="msapplication-TileColor" content="#0D9488">
+<meta name="theme-color" content="#015A91">
+<meta name="msapplication-TileColor" content="#015A91">
 <meta name="msapplication-TileImage" content="icons/icon-144x144.png">
 
 <!-- iOS PWA Support -->
@@ -22,8 +22,8 @@
 <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192x192.png">
 
 <!-- Standard Favicon -->
-<link rel="icon" type="image/png" sizes="96x96" href="icons/icon-96x96.png?v=3">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-96x96.png?v=3">
+<link rel="icon" type="image/png" sizes="96x96" href="icons/icon-96x96.png?v=4">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-96x96.png?v=4">
 
 <!-- Open Graph -->
 <meta name="description" content="Interaktiver Trainer für BGA-Analyse und Beatmung — Fit4Dienst">
@@ -52,7 +52,7 @@
   --amber-s: rgba(217,119,6,.08);
   --purple: #7C3AED;
   --purple-s: rgba(124,58,237,.08);
-  --teal: #0D9488;
+  --teal: #015A91;
   --teal-s: rgba(13,148,136,.08);
   --r: 16px;
   --shadow: 0 1px 3px rgba(0,0,0,.08);
@@ -471,12 +471,12 @@ function showInstallBanner() {
   banner.id = 'install-banner';
   banner.innerHTML = `
     <div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:16px 20px;box-shadow:0 8px 32px rgba(0,0,0,.12);display:flex;align-items:center;gap:14px;max-width:420px;width:calc(100% - 32px);font-family:Inter,sans-serif;">
-      <img src="icons/icon-96x96.png?v=3" style="width:44px;height:44px;border-radius:10px" alt="Fit4Dienst">
+      <img src="icons/icon-96x96.png?v=4" style="width:44px;height:44px;border-radius:10px" alt="Fit4Dienst">
       <div style="flex:1;min-width:0">
         <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#1E293B">App installieren</div>
         <div style="font-size:12px;color:#475569;margin-top:2px">Fit4Dienst Trainer auf dem Gerät speichern</div>
       </div>
-      <button onclick="installPWA()" style="padding:8px 16px;border-radius:10px;border:none;background:#0D9488;color:#fff;font-family:Inter,sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">Installieren</button>
+      <button onclick="installPWA()" style="padding:8px 16px;border-radius:10px;border:none;background:#E53935;color:#fff;font-family:Inter,sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">Installieren</button>
       <button onclick="this.parentElement.parentElement.remove()" style="position:absolute;top:6px;right:10px;background:none;border:none;color:#94A3B8;cursor:pointer;font-size:18px;line-height:1">&times;</button>
     </div>
   `;

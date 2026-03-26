@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fit4dienst-masterclass-v3';
+const CACHE_NAME = 'fit4dienst-masterclass-v4';
 const ASSETS = [
   './',
   './Fit4Dienst-Masterclass.html',
