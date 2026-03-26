@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>BGA Masterclass — Fit4Dienst</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+:root {
+  --bg:#F8FAFC;--card:#FFF;--surface:#F1F5F9;--surface2:#E2E8F0;
+  --text:#1E293B;--text2:#475569;--text3:#94A3B8;
+  --red:#DC2626;--red-s:rgba(220,38,38,.08);--red-b:rgba(220,38,38,.15);
+  --blue:#2563EB;--blue-s:rgba(37,99,235,.08);
+  --green:#16A34A;--green-s:rgba(22,163,74,.08);
+  --amber:#D97706;--amber-s:rgba(217,119,6,.08);
+  --purple:#7C3AED;--purple-s:rgba(124,58,237,.08);
+  --r:12px;--shadow:0 1px 3px rgba(0,0,0,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* NAV TOP */
+.topnav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--surface2);height:52px}
+.logo{font-family:'Space Grotesk';font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px;color:var(--text)}
+.logo svg{width:32px;height:32px}
+.timer{font-family:'Space Grotesk';font-size:14px;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:5px}
+.timer svg{width:15px;height:15px}
+.timer.warn{color:var(--red)}
+.dtabs{display:none;gap:2px;background:var(--surface);border-radius:8px;padding:2px}
+@media(min-width:769px){.dtabs{display:flex}}
+.dtab{padding:6px 12px;border-radius:6px;border:none;background:transparent;color:var(--text2);font-family:'Inter';font-size:12px;font-weight:500;cursor:pointer;transition:.2s;white-space:nowrap}
+.dtab:hover{color:var(--text)}
+.dtab.active{background:var(--card);color:var(--text);box-shadow:var(--shadow)}
+
+/* BOTTOM NAV (mobile) */
+.bnav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);border-top:1px solid var(--surface2);padding:4px 0;padding-bottom:max(4px,env(safe-area-inset-bottom))}
+@media(min-width:769px){.bnav{display:none}}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;cursor:pointer;border:none;background:none;color:var(--text3);font-size:9px;font-weight:500;transition:.2s}
+.bnav-item.active{color:var(--red)}
+.bnav-item svg{width:20px;height:20px}
+
+/* MAIN */
+.main{padding:60px 16px 80px;max-width:900px;margin:0 auto}
+@media(min-width:769px){.main{padding:68px 24px 40px}}
+.view{display:none}.view.active{display:block}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--surface2);border-radius:var(--r);padding:20px;margin-bottom:12px;box-shadow:var(--shadow)}
+.card h3{font-family:'Space Grotesk';font-size:16px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.card p{font-size:14px;color:var(--text2);line-height:1.7}
+.hl{color:var(--text);font-weight:600}
+
+/* BADGES */
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.badge.red{background:var(--red-s);color:var(--red)}
+.badge.blue{background:var(--blue-s);color:var(--blue)}
+.badge.green{background:var(--green-s);color:var(--green)}
+.badge.amber{background:var(--amber-s);color:var(--amber)}
+.badge.purple{background:var(--purple-s);color:var(--purple)}
+
+/* HEADERS */
+.hdr{text-align:center;margin-bottom:28px}
+.hdr h1{font-family:'Space Grotesk';font-size:24px;font-weight:700;margin:8px 0 4px}
+.hdr p{color:var(--text2);font-size:13px;max-width:520px;margin:0 auto;line-height:1.6}
+
+/* TABLE */
+.ntable{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+.ntable th{text-align:left;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;border-bottom:2px solid var(--surface2)}
+.ntable td{padding:9px 10px;border-bottom:1px solid var(--surface)}
+.ntable .pn{font-weight:600;font-family:'Space Grotesk'}
+.ntable .pr{color:var(--text2)}
+.ntable .pm{color:var(--text3);font-size:11px}
+
+/* LEVEL CARDS — horizontal row */
+.lvl-grid{display:flex;flex-direction:column;gap:12px;margin:24px 0}
+@media(min-width:640px){.lvl-grid{flex-direction:row;gap:14px}}
+.lvl-card{background:var(--card);border:1px solid var(--surface2);border-radius:16px;padding:24px 20px;cursor:pointer;transition:.25s;position:relative;overflow:hidden;flex:1;min-height:140px}
+.lvl-card:hover{border-color:var(--text3);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.1)}
+.lvl-card .lnum{font-family:'Space Grotesk';font-size:64px;font-weight:800;opacity:.06;position:absolute;top:-8px;right:8px;line-height:1}
+.lvl-card .licon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.lvl-card .licon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
+.lvl-card h4{font-family:'Space Grotesk';font-size:16px;font-weight:700;margin:6px 0 4px}
+.lvl-card p{font-size:12px;color:var(--text2);line-height:1.6}
+
+/* ALGO */
+.algo-box{max-width:560px;margin:0 auto}
+.algo-step{margin-bottom:6px;opacity:.3;transform:translateY(4px);transition:.4s cubic-bezier(.16,1,.3,1)}
+.algo-step.show{opacity:1;transform:translateY(0)}
+.algo-node{background:var(--card);border:1px solid var(--surface2);border-radius:var(--r);padding:14px 18px;text-align:center;transition:.3s;box-shadow:var(--shadow)}
+.algo-node.acid{border-color:var(--red);background:var(--red-s)}
+.algo-node.alka{border-color:var(--blue);background:var(--blue-s)}
+.algo-node.ok{border-color:var(--green);background:var(--green-s)}
+.algo-node .lb{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+.algo-node .vl{font-family:'Space Grotesk';font-size:17px;font-weight:700}
+.algo-node .sb{font-size:12px;color:var(--text2);margin-top:2px}
+.algo-arrow{text-align:center;padding:3px 0;color:var(--text3);font-size:16px;opacity:0;transition:.3s}
+.algo-arrow.show{opacity:1}
+.algo-btns{display:flex;gap:10px;justify-content:center;margin:8px 0}
+.abtn{padding:8px 28px;border-radius:8px;border:2px solid;font-family:'Inter';font-size:13px;font-weight:600;cursor:pointer;transition:.2s;background:transparent}
+.abtn.ja{border-color:var(--green);color:var(--green)}
+.abtn.ja:hover{background:var(--green);color:#fff}
+.abtn.nein{border-color:var(--red);color:var(--red)}
+.abtn.nein:hover{background:var(--red);color:#fff}
+.abtn:disabled{opacity:.2;cursor:default}
+.abtn:disabled:hover{background:transparent;color:inherit}
+
+/* SEVERITY */
+.sev-bar{position:relative;height:48px;border-radius:var(--r);overflow:hidden;margin-bottom:20px;border:1px solid var(--surface2)}
+.sev-zone{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;cursor:pointer;transition:.2s}
+.sev-zone:hover{filter:brightness(1.05)}
+.sz1{left:0;width:25%;background:linear-gradient(135deg,#22C55E,#4ADE80);color:#052e16}
+.sz2{left:25%;width:25%;background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#451a03}
+.sz3{left:50%;width:25%;background:linear-gradient(135deg,#F97316,#EF4444);color:#fff}
+.sz4{left:75%;width:25%;background:linear-gradient(135deg,#EF4444,#DC2626);color:#fff}
+.sev-mk{position:absolute;top:-4px;width:3px;height:calc(100% + 8px);background:var(--text);border-radius:2px;box-shadow:0 0 6px rgba(0,0,0,.3);transition:left .5s cubic-bezier(.16,1,.3,1);z-index:5}
+.sev-ml{position:absolute;top:-20px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;white-space:nowrap}
+.be-box{text-align:center;max-width:380px;margin:0 auto 20px}
+.be-num{font-family:'Space Grotesk';font-size:40px;font-weight:800;transition:.3s}
+.be-slider{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;background:linear-gradient(90deg,#EF4444,#F97316,#FBBF24,#22C55E,#22C55E,#FBBF24,#F97316,#EF4444);outline:none;margin:10px 0}
+.be-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--text);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.sev-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.sev-c{background:var(--card);border-radius:8px;padding:10px;text-align:center;border:1px solid var(--surface2);cursor:pointer;transition:.2s;box-shadow:var(--shadow)}
+.sev-c.on{border-color:var(--text);box-shadow:0 0 0 1px var(--text)}
+.sev-c .sr{font-family:'Space Grotesk';font-size:12px;font-weight:700;margin-bottom:2px}
+.sev-c .sl{font-size:10px;color:var(--text2)}
+
+/* LAKTAT TABLE */
+.lak-row{display:grid;grid-template-columns:100px 1fr;gap:8px;padding:10px 0;border-bottom:1px solid var(--surface);align-items:center}
+.lak-val{font-family:'Space Grotesk';font-weight:700;font-size:15px}
+.lak-txt{font-size:13px;color:var(--text2)}
+
+/* CASE */
+.case-card{background:var(--card);border:1px solid var(--surface2);border-radius:16px;padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
+.case-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.case-title{font-family:'Space Grotesk';font-size:18px;font-weight:700}
+.case-meta{font-size:12px;color:var(--text2);margin-top:2px}
+.case-num{font-size:10px;font-weight:600;padding:3px 8px;border-radius:12px;background:var(--surface);color:var(--text2)}
+.vitals{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:6px;margin-bottom:14px}
+.vital{background:var(--surface);border-radius:8px;padding:8px;text-align:center}
+.vital .vl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.3px}
+.vital .vv{font-family:'Space Grotesk';font-size:16px;font-weight:700;margin:2px 0}
+.vital .vn{font-size:8px;color:var(--text3)}
+.vital.bad .vv{color:var(--red)}
+.vital.good .vv{color:var(--green)}
+.scenario{background:var(--surface);border-radius:8px;padding:12px;font-size:13px;color:var(--text2);line-height:1.6}
+.scenario strong{color:var(--text)}
+.klinik{margin-top:10px;background:var(--surface);border-radius:8px;padding:12px}
+.klinik-t{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.klinik-i{font-size:12px;color:var(--text2);line-height:1.5;padding:2px 0}
+
+/* QUESTIONS */
+.qcard{background:var(--card);border:1px solid var(--surface2);border-radius:14px;padding:20px;margin-bottom:10px;box-shadow:var(--shadow)}
+.qcard h3{font-size:14px;font-weight:600;margin-bottom:12px}
+.qcard .stag{font-size:10px;font-weight:600;color:var(--amber);margin-bottom:4px}
+.answers{display:flex;flex-direction:column;gap:6px}
+.ans{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;background:var(--surface);border:1px solid transparent;color:var(--text);font-size:12px;cursor:pointer;transition:.2s;text-align:left;font-family:'Inter';line-height:1.4}
+.ans:hover{border-color:var(--surface2);background:var(--surface2)}
+.ans .ltr{width:22px;height:22px;border-radius:6px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;color:var(--text3);flex-shrink:0}
+.ans.right{border-color:var(--green);background:var(--green-s)}
+.ans.right .ltr{background:var(--green);color:#fff}
+.ans.wrong{border-color:var(--red);background:var(--red-s)}
+.ans.wrong .ltr{background:var(--red);color:#fff}
+
+/* FEEDBACK */
+.fb{background:var(--card);border:1px solid var(--surface2);border-radius:var(--r);padding:16px;margin-top:10px}
+.fb.ok{border-color:var(--green);background:var(--green-s)}
+.fb.no{border-color:var(--red);background:var(--red-s)}
+.fb h4{font-size:13px;font-weight:600;margin-bottom:4px}
+.fb p{font-size:12px;color:var(--text2);line-height:1.6}
+
+/* SOLUTION */
+.sol-card{background:var(--card);border:2px solid var(--green);border-radius:14px;padding:20px;margin-top:14px}
+.sol-card h3{font-family:'Space Grotesk';font-size:15px;font-weight:700;margin-bottom:12px;color:var(--green)}
+.sol-row{display:grid;grid-template-columns:110px 1fr;gap:6px;padding:7px 0;border-bottom:1px solid var(--surface)}
+.sol-row:last-child{border:none}
+.sol-lb{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase}
+.sol-vl{font-size:12px;color:var(--text);line-height:1.5}
+
+/* FILTERS */
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.fbtn{padding:6px 14px;border-radius:20px;border:1px solid var(--surface2);background:var(--card);color:var(--text2);font-size:11px;font-weight:500;cursor:pointer;transition:.2s;font-family:'Inter'}
+.fbtn:hover{border-color:var(--text3)}
+.fbtn.on{background:var(--red);color:#fff;border-color:var(--red)}
+
+/* PROGRESS */
+.prog{display:flex;gap:3px;margin-bottom:20px}
+.pip{flex:1;height:3px;border-radius:2px;background:var(--surface2);transition:.3s}
+.pip.done{background:var(--green)}
+.pip.now{background:var(--blue)}
+
+/* SCORE */
+.score-panel{text-align:center}
+.score-panel .big{font-family:'Space Grotesk';font-size:48px;font-weight:800}
+
+/* BTN */
+.btn{padding:10px 20px;border-radius:8px;font-family:'Inter';font-size:13px;font-weight:600;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:6px;border:none}
+.btn.primary{background:var(--red);color:#fff}
+.btn.primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn.ghost{background:transparent;border:1px solid var(--surface2);color:var(--text2)}
+.btn.ghost:hover{border-color:var(--text3);color:var(--text)}
+.controls{display:flex;justify-content:center;gap:8px;margin-top:24px}
+
+/* TOGGLE */
+.toggle{display:flex;gap:6px;justify-content:center;margin-bottom:16px}
+.toggle .btn{font-size:12px;padding:8px 20px;border:2px solid var(--surface2);background:transparent;color:var(--text2)}
+.toggle .btn.on-acid{border-color:var(--red);color:var(--red);background:var(--red-s)}
+.toggle .btn.on-alka{border-color:var(--blue);color:var(--blue);background:var(--blue-s)}
+
+/* ICON CIRCLES */
+.ic{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.ic.red{background:var(--red-s);color:var(--red)}
+.ic.blue{background:var(--blue-s);color:var(--blue)}
+.ic.green{background:var(--green-s);color:var(--green)}
+.ic.amber{background:var(--amber-s);color:var(--amber)}
+.ic.purple{background:var(--purple-s);color:var(--purple)}
+
+/* INFO BOX */
+.infobox{background:var(--surface);border-radius:10px;padding:14px 16px;margin:10px 0;border-left:3px solid var(--blue)}
+.infobox.warn{border-left-color:var(--amber)}
+.infobox.tip{border-left-color:var(--green)}
+.infobox .ib-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.infobox p{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* FORMULA */
+.formula{background:var(--card);border:2px solid var(--surface2);border-radius:10px;padding:16px;text-align:center;margin:12px 0}
+.formula .fx{font-family:'Space Grotesk';font-size:20px;font-weight:700;color:var(--text);letter-spacing:1px}
+.formula .fl{font-size:11px;color:var(--text3);margin-top:4px}
+
+/* KOMPENSATION PATTERN CARDS */
+.komp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+@media(max-width:640px){.komp-grid{grid-template-columns:1fr}}
+.komp-card{background:var(--card);border:1px solid var(--surface2);border-radius:10px;padding:14px;box-shadow:var(--shadow)}
+.komp-card .kh{font-family:'Space Grotesk';font-size:12px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.komp-card .kvals{font-family:'Space Grotesk';font-size:11px;color:var(--text2);line-height:1.8}
+.komp-card .kex{font-size:11px;color:var(--text3);margin-top:6px;line-height:1.5;font-style:italic}
+
+/* DIFFERENTIAL CARDS */
+.diff-card{background:var(--card);border:1px solid var(--surface2);border-radius:12px;padding:16px;margin:10px 0;box-shadow:var(--shadow)}
+.diff-card h4{font-family:'Space Grotesk';font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.diff-card .step{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--surface)}
+.diff-card .step:last-child{border:none}
+.diff-card .snum{width:24px;height:24px;border-radius:50%;background:var(--red-s);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.diff-card .stxt{font-size:13px;color:var(--text2);line-height:1.5}
+.diff-card .stxt strong{color:var(--text)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fadein{animation:fadeUp .4s cubic-bezier(.16,1,.3,1)}
+
+@media(max-width:640px){
+  .vitals{grid-template-columns:repeat(3,1fr)}
+  .sev-cards{grid-template-columns:repeat(2,1fr)}
+  .hdr h1{font-size:20px}
+  .sol-row{grid-template-columns:90px 1fr}
+}
+</style>
+</head>
+<body>
+<div class="topnav">
+  <div class="logo">
+    <svg viewBox="0 0 32 32" fill="none">
+      <rect width="32" height="32" rx="8" fill="#DC2626"/>
+      <path d="M16 4c0 0-9 10-9 17a9 9 0 0018 0c0-7-9-17-9-17z" fill="#fff" opacity=".9"/>
+      <text x="16" y="22" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="8" font-weight="800" fill="#DC2626">pH</text>
+    </svg>
+    BGA Masterclass
+  </div>
+  <div class="dtabs" id="dtabs"></div>
+  <div class="timer" id="timerBox">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    <span id="timerD">60:00</span>
+  </div>
+</div>
+
+<div class="bnav" id="bnav"></div>
+
+<div class="main">
+
+<!-- ===== START ===== -->
+<div class="view active" id="v-start">
+  <div class="hdr">
+    <svg viewBox="0 0 48 48" fill="none" style="width:48px;height:48px;margin:0 auto 8px;display:block">
+      <rect width="48" height="48" rx="14" fill="#DC2626"/>
+      <path d="M24 6c0 0-13 14.5-13 24.5a13 13 0 0026 0C37 20.5 24 6 24 6z" fill="#fff" opacity=".9"/>
+      <text x="24" y="33" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="12" font-weight="800" fill="#DC2626">pH</text>
+    </svg>
+    <div class="badge blue">&#129504; Fit4Dienst</div>
+    <h1>BGA Interpretation</h1>
+    <p>Vom Grundverst&auml;ndnis zur klinischen Expertise &mdash; in 5 Stufen. Grundlagen. Kompensation. Differentialdiagnosen. Algorithmus. 18 Fallbeispiele. F&uuml;r Pflegekr&auml;fte und Assistenz&auml;rzte im 1.&ndash;2. WB-Jahr.</p>
+  </div>
+  <div class="lvl-grid">
+    <div class="lvl-card" onclick="go('grund')">
+      <div class="lnum">1</div>
+      <div class="licon" style="background:var(--green-s);color:var(--green)"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
+      <div class="badge green">Grundlage</div>
+      <h4>Was ist eine BGA?</h4>
+      <p>Was misst sie? Die 3 Kernparameter. Normalwerte und die Eselsbr&uuml;cke.</p>
+    </div>
+    <div class="lvl-card" onclick="go('be')">
+      <div class="lnum">2</div>
+      <div class="licon" style="background:var(--amber-s);color:var(--amber)"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <div class="badge amber">Advanced</div>
+      <h4>Kompensation, BE &amp; Laktat</h4>
+      <p>Puffersystem. Kompensationsmechanismen. Schweregrad. Laktat lesen.</p>
+    </div>
+    <div class="lvl-card" onclick="go('expert')">
+      <div class="lnum">3</div>
+      <div class="licon" style="background:var(--purple-s);color:var(--purple)"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg></div>
+      <div class="badge purple">Expert</div>
+      <h4>Differentialdiagnosen</h4>
+      <p>Metabolische Differenzierung. Na-Cl-38. Stewart&rsquo;s Approach.</p>
+    </div>
+    <div class="lvl-card" onclick="go('algo')">
+      <div class="lnum">4</div>
+      <div class="licon" style="background:var(--blue-s);color:var(--blue)"><svg viewBox="0 0 24 24"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 01-9 9"/></svg></div>
+      <div class="badge blue">Algorithmus</div>
+      <h4>Interaktiver Algorithmus</h4>
+      <p>Azidose vs. Alkalose. Respiratorisch vs. metabolisch. Klickt euch durch!</p>
+    </div>
+    <div class="lvl-card" onclick="go('cases')">
+      <div class="lnum">5</div>
+      <div class="licon" style="background:var(--red-s);color:var(--red)"><svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></div>
+      <div class="badge red">Praxis</div>
+      <h4>18 Fallbeispiele</h4>
+      <p>Echte Notaufnahme-F&auml;lle. Vom Grundlagen- bis Expert-Level. Mit L&ouml;sungen.</p>
+    </div>
+  </div>
+  <div class="controls"><button class="btn primary" onclick="go('grund');startTimer()">Kurs starten &#8594;</button></div>
+</div>
+
+<!-- ===== GRUNDLAGEN ===== -->
+<div class="view" id="v-grund">
+  <div class="hdr"><div class="badge green">Stufe 1 &mdash; Grundlage</div><h1>Was ist eine BGA?</h1><p>Die arterielle Blutgasanalyse &mdash; eines der wichtigsten Instrumente in der Notfall- und Intensivmedizin.</p></div>
+
+  <div class="card fadein"><h3><span class="ic green">1</span> Die arterielle BGA misst:</h3>
+    <p>Eine einzige Blutprobe verr&auml;t uns sofort:</p>
+    <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="infobox tip" style="margin:0"><div class="ib-title">Gasaustausch</div><p>pO&#8322;, pCO&#8322;, SpO&#8322;</p></div>
+      <div class="infobox" style="margin:0"><div class="ib-title">S&auml;ure-Basen-Haushalt</div><p>pH, BE, HCO&#8323;</p></div>
+      <div class="infobox warn" style="margin:0"><div class="ib-title">Elektrolyte</div><p>Na&#8314;, K&#8314;, Cl&#8315;, Ca&#178;&#8314;</p></div>
+      <div class="infobox" style="margin:0;border-left-color:var(--red)"><div class="ib-title">Weitere</div><p>Hb, Glukose, Laktat</p></div>
+    </div>
+    <p style="margin-top:12px">Damit k&ouml;nnen wir beurteilen: Funktioniert die Lunge? Ist der Stoffwechsel im Gleichgewicht? Ist es <span class="hl">akut oder chronisch?</span></p>
+  </div>
+
+  <div class="card fadein"><h3><span class="ic blue">2</span> Die 3 Kernparameter</h3>
+    <p><span class="hl">Nur 3 Werte reichen aus,</span> um 90% aller BGAs zu interpretieren:</p>
+    <table class="ntable"><thead><tr><th>Parameter</th><th>Normalwert</th><th>Was sagt er?</th></tr></thead><tbody>
+      <tr><td class="pn">pH</td><td class="pr">7,35 &ndash; 7,45</td><td class="pm">&lt;7,35 = Azidose &middot; &gt;7,45 = Alkalose</td></tr>
+      <tr><td class="pn">pCO&#8322;</td><td class="pr">35 &ndash; 45 mmHg</td><td class="pm">Lungen-Parameter &middot; &gt;45 = Hyperkapnie</td></tr>
+      <tr><td class="pn">BE</td><td class="pr">&plusmn; 2 mmol/l</td><td class="pm">Stoffwechsel-Parameter &middot; &lt;-2 = S&auml;ure&uuml;berschuss</td></tr>
+    </tbody></table>
+    <div class="infobox tip" style="margin-top:10px"><div class="ib-title">Zus&auml;tzlich immer checken</div>
+      <p><span class="hl">pO&#8322;</span> (&gt;70 mmHg normal) &mdash; Hypox&auml;mie? <span class="hl">Laktat</span> (&lt;2 mmol/l) &mdash; Schock? <span class="hl">Elektrolyte</span> &mdash; Entgleisung?</p>
+    </div>
+  </div>
+
+  <div class="card fadein"><h3><span class="ic amber">3</span> Die Eselsbr&uuml;cke</h3>
+    <p>Merkt euch diese 4 Fragen &mdash; in genau dieser Reihenfolge:</p>
+    <div class="infobox" style="border-left-color:var(--red);margin-top:8px"><p><span class="hl">1. pH:</span> WAS ist los? (Azidose oder Alkalose?)</p></div>
+    <div class="infobox" style="border-left-color:var(--amber)"><p><span class="hl">2. Hypoxie?</span> Ist pO&#8322; &lt; 75 mmHg oder SpO&#8322; &lt; 94%?</p></div>
+    <div class="infobox" style="border-left-color:var(--blue)"><p><span class="hl">3. pCO&#8322;:</span> Ist die LUNGE schuld? (respiratorisch?)</p></div>
+    <div class="infobox tip"><p><span class="hl">4. BE / HCO&#8323;:</span> Ist der STOFFWECHSEL schuld? (metabolisch?)</p></div>
+    <p style="margin-top:10px">Und dann die entscheidende Frage: <span class="hl">Kompensiert der jeweils andere?</span> Wenn ja &#8594; chronisch. Wenn nein &#8594; akut &#8594; dringender!</p>
+  </div>
+
+  <div class="controls">
+    <button class="btn ghost" onclick="go('start')">&larr; &Uuml;bersicht</button>
+    <button class="btn primary" onclick="go('be')">Weiter &#8594; Advanced</button>
+  </div>
+</div>
+
+<!-- ===== ALGORITHMUS ===== -->
+<div class="view" id="v-algo">
+  <div class="hdr"><div class="badge blue">Stufe 2 &mdash; Basic</div><h1>Der Algorithmus</h1><p>Klickt euch gemeinsam durch. Bei jedem Schritt: JA oder NEIN?</p></div>
+
+  <div class="card fadein" style="margin-bottom:20px">
+    <h3><span class="ic blue">?</span> So geht ihr vor</h3>
+    <p><span class="hl">Schritt 1:</span> pH ablesen &mdash; Azidose (&lt;7,35) oder Alkalose (&gt;7,45)?<br>
+    <span class="hl">Schritt 2:</span> pCO&#8322; pr&uuml;fen &mdash; respiratorische St&ouml;rung?<br>
+    <span class="hl">Schritt 3:</span> BE / HCO&#8323; pr&uuml;fen &mdash; metabolische St&ouml;rung?<br>
+    <span class="hl">Schritt 4:</span> Kompensation? Ja = chronisch, Nein = akut!</p>
+  </div>
+
+  <div class="toggle">
+    <button class="btn on-acid" id="tAcid" onclick="loadAlgo('acid')">Azidose</button>
+    <button class="btn" id="tAlka" onclick="loadAlgo('alka')">Alkalose</button>
+  </div>
+  <div class="algo-box" id="algoBox"></div>
+  <div class="controls">
+    <button class="btn ghost" onclick="go('expert')">&larr; Expert</button>
+    <button class="btn ghost" onclick="resetAlgo()">&#8635; Neustart</button>
+    <button class="btn primary" onclick="go('cases')">Weiter &#8594; Fallbeispiele</button>
+  </div>
+</div>
+
+<!-- ===== BE & LAKTAT (ADVANCED) ===== -->
+<div class="view" id="v-be">
+  <div class="hdr"><div class="badge amber">Stufe 3 &mdash; Advanced</div><h1>Kompensation, BE &amp; Laktat</h1><p>Wie der K&ouml;rper gegenreguliert &mdash; und wie ihr den Schweregrad bestimmt.</p></div>
+
+  <div class="card fadein"><h3><span class="ic blue">&#9878;</span> Das Puffersystem</h3>
+    <div class="formula"><div class="fx">CO&#8322; + H&#8322;O &#8596; H&#8322;CO&#8323; &#8596; H&#8314; + HCO&#8323;&#8315;</div><div class="fl">Kohlens&auml;ure-Bicarbonat-Gleichgewicht</div></div>
+    <p>Das ist <span class="hl">die zentrale Gleichung</span> des S&auml;ure-Basen-Haushalts. Wenn sich eine Seite &auml;ndert, versucht der K&ouml;rper die andere Seite anzupassen.</p>
+    <div class="infobox" style="margin-top:10px"><div class="ib-title">Zwei Kompensationswege</div>
+      <p><span class="hl">Lunge (schnell):</span> Innerhalb von Minuten bis Stunden. Steuert CO&#8322; &uuml;ber &Auml;nderung der Atemfrequenz und -tiefe.<br>
+      <span class="hl">Niere (langsam):</span> Dauert Tage. Steuert HCO&#8323;&#8315; &uuml;ber Ausscheidung oder R&uuml;ckresorption.</p>
+    </div>
+  </div>
+
+  <div class="card fadein"><h3><span class="ic amber">&#8644;</span> Kompensationsmechanismen</h3>
+    <p>Bei jeder prim&auml;ren St&ouml;rung versucht der K&ouml;rper gegenzuregulieren:</p>
+    <div class="komp-grid">
+      <div class="komp-card">
+        <div class="kh" style="color:var(--red)"><span class="ic red" style="width:20px;height:20px;font-size:10px">A</span> Met. Azidose &#8594; Lunge kompensiert</div>
+        <div class="kvals">pH &darr; + BE &lt; -2 + pCO&#8322; &darr;<br>Lunge atmet mehr CO&#8322; ab (Kussmaul)</div>
+        <div class="kex">Schnelle Atmung &#8594; gesteigerte CO&#8322;-Elimination &#8594; resp. Alkalose als Kompensation</div>
+      </div>
+      <div class="komp-card">
+        <div class="kh" style="color:var(--red)"><span class="ic red" style="width:20px;height:20px;font-size:10px">B</span> Resp. Azidose &#8594; Niere kompensiert</div>
+        <div class="kvals">pH &darr; + pCO&#8322; &gt; 45 + BE &gt; +2<br>Niere resorbiert mehr HCO&#8323;&#8315;</div>
+        <div class="kex">Langsamer Ausgleich (Tage!) &#8594; gesteigerte HCO&#8323;&#8315;-R&uuml;ckresorption &#8594; met. Alkalose als Kompensation</div>
+      </div>
+      <div class="komp-card">
+        <div class="kh" style="color:var(--blue)"><span class="ic blue" style="width:20px;height:20px;font-size:10px">C</span> Met. Alkalose &#8594; Lunge kompensiert</div>
+        <div class="kvals">pH &uarr; + BE &gt; +2 + pCO&#8322; &uarr;<br>Lunge atmet weniger &#8594; CO&#8322; steigt</div>
+        <div class="kex">Langsamere Atmung &#8594; reduzierte CO&#8322;-Elimination &#8594; resp. Azidose als Kompensation</div>
+      </div>
+      <div class="komp-card">
+        <div class="kh" style="color:var(--blue)"><span class="ic blue" style="width:20px;height:20px;font-size:10px">D</span> Resp. Alkalose &#8594; Niere kompensiert</div>
+        <div class="kvals">pH &uarr; + pCO&#8322; &lt; 35 + BE &lt; -2<br>Niere scheidet mehr HCO&#8323;&#8315; aus</div>
+        <div class="kex">Gesteigerte HCO&#8323;&#8315;-Elimination &#8594; met. Azidose als Kompensation</div>
+      </div>
+    </div>
+    <div class="infobox warn" style="margin-top:8px"><div class="ib-title">Klinische Regel</div>
+      <p>Kompensation = chronisch (K&ouml;rper hatte Zeit). Keine Kompensation = akut (dringender!). Eine <span class="hl">vollst&auml;ndige Kompensation</span> normalisiert den pH nie ganz &mdash; wenn pH normal ist bei abnormen Werten, liegt eine <span class="hl">gemischte St&ouml;rung</span> vor.</p>
+    </div>
+  </div>
+
+  <div class="card fadein"><h3><span class="ic amber">BE</span> Was bedeutet der Base Excess?</h3>
+    <p>Der BE misst, wie viel S&auml;ure oder Base der K&ouml;rper im Vergleich zum Normalzustand angesammelt hat.<br><br>
+    <span class="hl">Negativer BE = zu viel S&auml;ure</span> (metabolische Azidose)<br>
+    <span class="hl">Positiver BE = zu viel Base</span> (metabolische Alkalose)<br><br>
+    Warum ist der BE so wichtig? Weil er den <span class="hl">Stoffwechsel-Anteil isoliert</span>. Der pCO&#8322; kann sich in Minuten &auml;ndern (Atmung), aber der BE ver&auml;ndert sich &uuml;ber Stunden &mdash; er zeigt die <span class="hl">Tiefe der St&ouml;rung</span>.</p>
+  </div>
+
+  <div class="card fadein"><h3>Schweregrad nach BE</h3>
+    <div class="sev-bar">
+      <div class="sev-zone sz1">Leicht</div><div class="sev-zone sz2">Mittel</div><div class="sev-zone sz3">Schwer</div><div class="sev-zone sz4">Lebens-<br>bedrohlich</div>
+      <div class="sev-mk" id="sevM" style="left:50%"><div class="sev-ml" id="sevML">BE: 0</div></div>
+    </div>
+    <div class="be-box">
+      <div class="be-num" id="beNum">0</div>
+      <input type="range" class="be-slider" min="-25" max="25" value="0" step="1" oninput="moveBE(this.value)">
+    </div>
+    <div class="sev-cards">
+      <div class="sev-c on" id="sc1"><div class="sr" style="color:var(--green)">0 bis &plusmn;8</div><div class="sl">Leicht</div></div>
+      <div class="sev-c" id="sc2"><div class="sr" style="color:var(--amber)">&plusmn;9 bis &plusmn;16</div><div class="sl">Mittelschwer</div></div>
+      <div class="sev-c" id="sc3"><div class="sr" style="color:#F97316">&plusmn;17 bis &plusmn;20</div><div class="sl">Schwer</div></div>
+      <div class="sev-c" id="sc4"><div class="sr" style="color:var(--red)">&gt; &plusmn;20</div><div class="sl">Lebensbedrohlich</div></div>
+    </div>
+  </div>
+
+  <div class="card fadein"><h3><span class="ic red">L</span> Was ist Laktat?</h3>
+    <p>Laktat entsteht, wenn Gewebe <span class="hl">nicht genug Sauerstoff</span> bekommt (anaerober Stoffwechsel). Es ist der wichtigste Marker f&uuml;r <span class="hl">Gewebehypoperfusion &mdash; also Schock</span>.</p>
+    <div style="margin-top:12px">
+      <div class="lak-row"><div class="lak-val" style="color:var(--green)">&lt; 2,0</div><div class="lak-txt"><span class="hl">Normal.</span> Kein Handlungsbedarf.</div></div>
+      <div class="lak-row"><div class="lak-val" style="color:var(--amber)">2,0 &ndash; 4,0</div><div class="lak-txt"><span class="hl">Erh&ouml;ht.</span> Ursache suchen! Engmaschig kontrollieren.</div></div>
+      <div class="lak-row"><div class="lak-val" style="color:#F97316">4,0 &ndash; 10</div><div class="lak-txt"><span class="hl">Schwer erh&ouml;ht.</span> Schockgeschehen wahrscheinlich. Je h&ouml;her, desto kritischer.</div></div>
+      <div class="lak-row"><div class="lak-val" style="color:var(--red)">&gt; 10</div><div class="lak-txt"><span class="hl">Kritisch.</span> Lebensbedrohlich. Schlechtere Prognose. Sofort handeln!</div></div>
+    </div>
+    <div class="infobox warn" style="margin-top:12px"><div class="ib-title">Differentialdiagnose der Laktatazidose</div>
+      <p><span class="hl">O&#8322;-Verbrauch &gt; O&#8322;-Angebot:</span> Gest&ouml;rte Gewebeperfusion, schwere Hypoxie, schwere An&auml;mie, CO-Vergiftung, Krampfanfall.<br>
+      <span class="hl">Gest&ouml;rter mitochondrialer Metabolismus:</span> Metformin, SGLT2-Hemmer, Ethanol.<br>
+      <span class="hl">Gest&ouml;rte hepatale Laktat-Clearance:</span> Akutes Leberversagen, Thiaminmangel (Vitamin B1).</p>
+    </div>
+  </div>
+
+  <div class="card fadein"><h3><span class="ic purple">+</span> Laktat + BE zusammen lesen</h3>
+    <p><span class="hl">Hohes Laktat + negativer BE</span> = Laktatazidose (h&auml;ufigste metabolische Azidose in der Notaufnahme)<br><br>
+    <span class="hl">Normales Laktat + negativer BE</span> = andere metabolische Azidose (Ketoazidose, renal, Intoxikation)<br><br>
+    <span class="hl">Wann Laktat messen?</span> Bei jedem V.a. Schock, Sepsis, Reanimation, unklarer Azidose.</p>
+  </div>
+
+  <div class="controls">
+    <button class="btn ghost" onclick="go('grund')">&larr; Grundlagen</button>
+    <button class="btn primary" onclick="go('expert')">Weiter &#8594; Expert</button>
+  </div>
+</div>
+
+<!-- ===== EXPERT THEORY ===== -->
+<div class="view" id="v-expert">
+  <div class="hdr"><div class="badge red">Stufe 4 &mdash; Expert</div><h1>Metabolische Differentialdiagnosen</h1><p>Die Wurzel des Problems finden &mdash; Laktat, Chlorid, UMA und Albumin.</p></div>
+
+  <div class="card fadein"><h3><span class="ic red">&#9830;</span> Stewart&rsquo;s Approach</h3>
+    <p>Der pH wird bestimmt durch das Gleichgewicht von <span class="hl">Kationen und Anionen</span> im Blut. Bei metabolischen St&ouml;rungen fragen wir: <span class="hl">Welches Ion ist die Wurzel des Problems?</span></p>
+    <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;text-align:center">
+      <div class="infobox" style="margin:0;border-left-color:var(--red)"><div class="ib-title">Laktat</div><p>S&auml;ure aus O&#8322;-Mangel</p></div>
+      <div class="infobox" style="margin:0;border-left-color:var(--amber)"><div class="ib-title">Chlorid (Cl&#8315;)</div><p>Na-Cl-38 Formel</p></div>
+      <div class="infobox" style="margin:0;border-left-color:var(--purple)"><div class="ib-title">UMA / Albumin</div><p>Unmeasured Anions</p></div>
+    </div>
+  </div>
+
+  <div class="diff-card fadein">
+    <h4><span class="ic red">&#9660;</span> Algorithmus: Metabolische Azidose (BE &lt; -2)</h4>
+    <div class="step"><div class="snum">1</div><div class="stxt"><strong>Erkl&auml;rt das Laktat den BE?</strong><br>Wenn Laktat &asymp; |BE| &#8594; <span class="hl">Laktazidose</span><br><span style="font-size:11px;color:var(--text3)">Hypoxie, Hypovolemie, Sepsis, Leberversagen, Medikamente (Metformin)</span></div></div>
+    <div class="step"><div class="snum">2</div><div class="stxt"><strong>Erkl&auml;rt Na-Cl-38 den BE?</strong><br>Wenn (Na &minus; Cl &minus; 38) &lt; &minus;2 &#8594; <span class="hl">Hyperchlorämische Azidose</span>
+    <div class="formula" style="margin:8px 0;padding:10px"><div class="fx" style="font-size:16px">Na&#8314; &minus; Cl&#8315; &minus; 38 &lt; &minus;2 mmol/l</div><div class="fl">Nierenversagen, renal-tubul&auml;re Azidose, Diarrh&ouml;en, Erbrechen</div></div></div></div>
+    <div class="step"><div class="snum">3</div><div class="stxt"><strong>Wenn weder 1 noch 2:</strong><br>&#8594; <span class="hl">Azidose durch erh&ouml;hte UMA</span> (unmeasured anions)<br><span style="font-size:11px;color:var(--text3)">Ketoazidose, Ur&auml;mie, Salicylatvergiftung, Methanol, Ethylenglykol</span></div></div>
+  </div>
+
+  <div class="diff-card fadein">
+    <h4><span class="ic blue">&#9650;</span> Algorithmus: Metabolische Alkalose (BE &gt; +2)</h4>
+    <div class="step"><div class="snum" style="background:var(--blue-s);color:var(--blue)">1</div><div class="stxt"><strong>Erkl&auml;rt Na-Cl-38 den BE?</strong><br>Wenn (Na &minus; Cl &minus; 38) &gt; +2 &#8594; <span class="hl">Hypochlor&auml;mische Alkalose</span>
+    <div class="formula" style="margin:8px 0;padding:10px"><div class="fx" style="font-size:16px">Na&#8314; &minus; Cl&#8315; &minus; 38 &gt; +2 mmol/l</div><div class="fl">Erbrechen, Diuretika, Exsikkose, Ringer-Laktat, Citrat</div></div></div></div>
+    <div class="step"><div class="snum" style="background:var(--blue-s);color:var(--blue)">2</div><div class="stxt"><strong>Wenn nicht 1: Ist Albumin niedrig?</strong><br>Wenn (42 &minus; Albumin) / 4 &gt; +2 &#8594; <span class="hl">Hypoalbumin&auml;mische Alkalose</span><br><span style="font-size:11px;color:var(--text3)">Albumin = schwache S&auml;ure. Akut-Phase-Reaktion, Leberinsuffizienz, Malnutrition, nephrotisches Syndrom, gro&szlig;e Wunden</span></div></div>
+  </div>
+
+  <div class="controls" style="margin-bottom:24px">
+    <button class="btn ghost" onclick="go('be')">&larr; Advanced</button>
+    <button class="btn primary" onclick="go('algo')">Weiter &#8594; Algorithmus</button>
+  </div>
+</div>
+
+<!-- ===== CASES ===== -->
+<div class="view" id="v-cases">
+  <div class="hdr"><div class="badge red">Alle Stufen</div><h1>Fallbeispiele</h1><p>18 echte Notaufnahme-F&auml;lle. Filtert nach Schwierigkeitsstufe.</p></div>
+  <div class="filters" id="cFilters"></div>
+  <div class="prog" id="cProg"></div>
+  <div id="caseBox"></div>
+</div>
+
+<!-- ===== DONE ===== -->
+<div class="view" id="v-done">
+  <div class="hdr"><div class="badge green">Geschafft!</div><h1>Kurs abgeschlossen</h1></div>
+  <div class="score-panel" id="finalScore"></div>
+</div>
+
+</div>
+
+<script>
+// ========== NAV ==========
+const views=['start','grund','be','expert','algo','cases','done'];
+const viewLabels=['Start','Grundlagen','Advanced','Expert','Algorithmus','F\u00e4lle','Fertig'];
+const navSVGs=[
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 01-9 9"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>'
+];
+function buildNav(){
+  const dt=document.getElementById('dtabs');
+  const bn=document.getElementById('bnav');
+  const navItems=[0,1,2,3,4,5]; // show 6 tabs on desktop, 6 on mobile
+  navItems.forEach((idx)=>{
+    const v=views[idx];
+    const t=document.createElement('button');t.className='dtab'+(idx===0?' active':'');t.textContent=viewLabels[idx];t.onclick=()=>go(v);dt.appendChild(t);
+    const b=document.createElement('button');b.className='bnav-item'+(idx===0?' active':'');b.innerHTML=navSVGs[idx]+'<span>'+viewLabels[idx]+'</span>';b.onclick=()=>go(v);bn.appendChild(b);
+  });
+}
+buildNav();
+
+function go(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const el=document.getElementById('v-'+id);if(el)el.classList.add('active');
+  const idx=views.indexOf(id);
+  document.querySelectorAll('.dtab').forEach((t,i)=>{t.classList.toggle('active',i===Math.min(idx,5))});
+  document.querySelectorAll('.bnav-item').forEach((t,i)=>{t.classList.toggle('active',i===Math.min(idx,5))});
+  window.scrollTo(0,0);
+  if(id==='algo')loadAlgo(curAlgo);
+  if(id==='cases')initCases();
+}
+
+// ========== TIMER ==========
+let timerInt,timerSec=3600;
+function startTimer(){if(timerInt)return;timerInt=setInterval(()=>{timerSec--;if(timerSec<0){clearInterval(timerInt);return}const m=Math.floor(timerSec/60),s=timerSec%60;document.getElementById('timerD').textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;if(timerSec<=300)document.getElementById('timerBox').classList.add('warn')},1000)}
+
+// ========== ALGO ==========
+let curAlgo='acid',algoState={step:0,path:[]};
+function loadAlgo(type){
+  curAlgo=type;algoState={step:0,path:[]};
+  document.getElementById('tAcid').className='btn'+(type==='acid'?' on-acid':'');
+  document.getElementById('tAlka').className='btn'+(type==='alka'?' on-alka':'');
+  renderAlgo();
+}
+function renderAlgo(){
+  const box=document.getElementById('algoBox');box.innerHTML='';
+  const isAcid=curAlgo==='acid';
+  const steps=[];
+  // Step 0: Starting node
+  steps.push({type:'node',cls:isAcid?'acid':'alka',lb:'Ausgangspunkt',vl:isAcid?'AZIDOSE':'ALKALOSE',sb:isAcid?'pH < 7,35':'pH > 7,45'});
+  // Step 1: First question — respiratory check
+  steps.push({type:'q',lb:'Respiratorische Pr\u00fcfung',vl:isAcid?'pCO\u2082 > 45 mmHg / 6 kPa?':'pCO\u2082 < 35 mmHg / 4,6 kPa?',sb:isAcid?'Ist die Lunge die prim\u00e4re Ursache?':'Atmet der Patient zu viel CO\u2082 ab?'});
+
+  const s=algoState;
+  if(s.path.length>=1){
+    const first=s.path[0];
+    if(first==='ja'){
+      // Respiratory path
+      steps.push({type:'result',cls:isAcid?'acid':'alka',vl:isAcid?'Respiratorische Azidose':'Respiratorische Alkalose',sb:isAcid?'Lunge ventiliert zu wenig \u2192 CO\u2082 staut sich':'Hyperventilation \u2192 zu viel CO\u2082 abgeatmet'});
+      // Compensation question
+      steps.push({type:'q',lb:'Metabolische Kompensation?',vl:isAcid?'BE > +2 mmol/l?':'BE < \u22122 mmol/l?',sb:'Kompensieren die Nieren? (Braucht Tage!)'});
+      if(s.path.length>=2){
+        const second=s.path[1];
+        steps.push({type:'result',cls:second==='ja'?'ok':(isAcid?'acid':'alka'),vl:second==='ja'?'Metabolische Kompensation \u2713':'Keine metabolische Kompensation \u2717',sb:second==='ja'?'Chronisch \u2014 Nieren hatten Zeit zum Gegensteuern':'Akut \u2014 sofort handeln!'});
+      }
+    } else {
+      // Metabolic path
+      steps.push({type:'result',cls:isAcid?'acid':'alka',vl:isAcid?'Metabolische Azidose':'Metabolische Alkalose',sb:isAcid?'BE < \u22122 mmol/l \u2192 Stoffwechsel ist schuld':'BE > +2 mmol/l \u2192 Stoffwechsel ist schuld'});
+      // Compensation question
+      steps.push({type:'q',lb:'Respiratorische Kompensation?',vl:isAcid?'pCO\u2082 < 35 mmHg / 4,6 kPa?':'pCO\u2082 > 45 mmHg / 6 kPa?',sb:'Kompensiert die Lunge? (Geht schnell!)'});
+      if(s.path.length>=2){
+        const second=s.path[1];
+        steps.push({type:'result',cls:second==='ja'?'ok':(isAcid?'acid':'alka'),vl:second==='ja'?'Respiratorische Kompensation \u2713':'Keine respiratorische Kompensation \u2717',sb:second==='ja'?'Lunge arbeitet dagegen \u2014 teilkompensiert':'Akut \u2014 gerade erst aufgetreten!'});
+      }
+    }
+  }
+
+  steps.forEach((st,i)=>{
+    if(i>0){const ar=document.createElement('div');ar.className='algo-arrow'+(i<=getVisibleStep()?' show':'');ar.textContent='\u2193';box.appendChild(ar)}
+    const el=document.createElement('div');el.className='algo-step'+(i<=getVisibleStep()?' show':'');
+    if(st.type==='node'||st.type==='result'){
+      el.innerHTML='<div class="algo-node '+st.cls+'"><div class="lb">'+st.lb+'</div><div class="vl">'+st.vl+'</div><div class="sb">'+st.sb+'</div></div>';
+    } else if(st.type==='q'){
+      const canClick=i===getVisibleStep();
+      el.innerHTML='<div class="algo-node"><div class="lb">'+st.lb+'</div><div class="vl">'+st.vl+'</div><div class="sb">'+st.sb+'</div></div><div style="height:6px"></div><div class="algo-btns"><button class="abtn ja" '+(canClick?'':'disabled')+' onclick="algoAns(\'ja\')">JA</button><button class="abtn nein" '+(canClick?'':'disabled')+' onclick="algoAns(\'nein\')">NEIN</button></div>';
+    }
+    box.appendChild(el);
+  });
+}
+function getVisibleStep(){return algoState.path.length===0?1:algoState.path.length===1?3:99}
+function algoAns(choice){algoState.path.push(choice);renderAlgo()}
+function resetAlgo(){algoState={step:0,path:[]};renderAlgo()}
+
+// ========== SEVERITY ==========
+function moveBE(v){
+  v=parseInt(v);const el=document.getElementById('beNum');
+  el.textContent=(v>=0?'+':'')+v;
+  const abs=Math.abs(v);let c,z;
+  if(abs<=8){c='var(--green)';z=1}else if(abs<=16){c='var(--amber)';z=2}else if(abs<=20){c='#F97316';z=3}else{c='var(--red)';z=4}
+  el.style.color=c;
+  const pct=((v+25)/50)*100;
+  document.getElementById('sevM').style.left=pct+'%';
+  document.getElementById('sevML').textContent='BE: '+(v>=0?'+':'')+v;
+  document.querySelectorAll('.sev-c').forEach(c=>c.classList.remove('on'));
+  document.getElementById('sc'+z).classList.add('on');
+}
+
+// ========== CASES ==========
+const C=[
+{n:'Fall 1 \u2014 Pneumonie',a:'88j, W',lv:'grund',sc:'Patientin kommt mit RTW wg. Husten, Fieber und AZ-Verschlechterung. Vom Hausarzt Antibiose vor einer Woche, ohne Effekt.',kl:['Somnolent, erweckbar, stark desorientiert','Lippenzyanose, marmoriert, trocken','Sehr arrhythmisch und tachykard','Versch\u00e4rftes AG, feuchte feinblasige RGs'],v:{pH:7.52,pCO2:22,SpO2:77,pO2:43,BE:-4,HCO3:27,Lak:2.2,Glu:78,K:3.9,Na:139,Cl:99,Hb:10.4},q:[{q:'Wie interpretiert ihr die BGA?',o:['Resp. Alkalose bei Hypokapnie + schwere Hypox\u00e4mie','Metabolische Azidose','Respiratorische Azidose','Gemischte St\u00f6rung'],c:0,f:'pH 7,52 (>7,45) = Alkalose. pCO\u2082 22 (<35) = respiratorisch. BE -4 = leichte met. Kompensation. Schwere Hypox\u00e4mie (pO\u2082 43)!'},{q:'Diagnose?',o:['Pneumonie','Lungenembolie','COPD Exazerbation','Herzinsuffizienz'],c:0,f:'Fieber, Husten, feuchte RGs, Hypox\u00e4mie \u2014 klassische Pneumonie. Die Alkalose entsteht kompensatorisch durch Tachypnoe.'}],s:{ls:'Fieber + Husten',lb:'Somnolent, Lippenzyanose, AG versch\u00e4rft + RGs',bga:'Resp. Alkalose bei schwerer Hypokapnie i.R. hypox\u00e4mischer resp. Insuffizienz, leichte met. Kompensation',dx:'Pneumonie',tx:'O\u2082 bis pO\u2082 >60; ggf. NIV. Pip/Taz + Azithromycin. Inhalationen. BGA Kontrolle 1h.'}},
+{n:'Fall 2 \u2014 GI-Blutung',a:'72j, M',lv:'basic',sc:'Patient nach Hematemesis und Synkope. RR 80/50, HF 120 im RTW.',kl:['Blass und kaltschwei\u00dfig','Tachykardie','Abdomen diffus druckdolent','Teerstuhl'],v:{pH:7.49,pCO2:28,SpO2:84,pO2:52,BE:-3,HCO3:20,Lak:3.8,Glu:110,K:3.8,Na:137,Cl:100,Hb:7.2},q:[{q:'BGA-Interpretation?',o:['Resp. Alkalose + Hypox\u00e4mie + leichte met. Kompensation. Hb 7,2!','Met. Azidose','Resp. Azidose','Normal'],c:0,f:'pH 7,49 = Alkalose. pCO\u2082 28 = resp. Hb 7,2 = schwere An\u00e4mie! Laktat 3,8 = beginnendes Schockgeschehen.'},{q:'Sofortma\u00dfnahme?',o:['Volumen + PPI 80mg iv + 3 EKs kreuzen','Antibiotika','Lyse','Beobachtung'],c:0,f:'H\u00e4morrhagischer Schock! O\u2082, PPI hochdosiert, Sterofundin 500-1000ml, 3 EKs kreuzen, Gerinnungsmanagement.'}],s:{ls:'Hematemesis + Synkope',lb:'Blass, kaltschwei\u00dfig, Tachykardie',bga:'Resp. Alkalose + Hypox\u00e4mie, leichte met. Kompensation',dx:'V.a. h\u00e4morrhagischer Schock bei oberer GI-Blutung',tx:'O\u2082, PPI 80mg iv, Sterofundin, 3 EKs kreuzen, Gerinnungsmanagement.'}},
+{n:'Fall 3 \u2014 Medikamentenintoxikation',a:'38j, W',lv:'basic',sc:'Suizidversuch. T\u00fcte mit Medikamenten und Abschiedsbrief.',kl:['Sopor\u00f6s bis komat\u00f6s','Trocken und geschwitzt','Rhythmisch, tachykard','Kein Atemger\u00e4usch \u2014 Apnoe!'],v:{pH:7.11,pCO2:120,SpO2:89,pO2:61,BE:3,HCO3:22,Lak:1.2,Glu:67,K:3.3,Na:133,Cl:93,Hb:13.4},q:[{q:'Was f\u00e4llt am pCO\u2082 auf?',o:['Massiv erh\u00f6ht (120!) \u2014 Apnoe','Leicht erh\u00f6ht','Normal'],c:0,f:'pCO\u2082 120 ist extrem! Schwere Hypoventilation durch Atemdepression.'},{q:'Art der St\u00f6rung?',o:['Resp. Azidose bei Hyperkapnie','Met. Azidose','Resp. Alkalose','Met. Alkalose'],c:0,f:'pH 7,11 = schwere Azidose. pCO\u2082 120 = respiratorisch.'},{q:'Erste Ma\u00dfnahme?',o:['Atemwege sichern \u2014 Schutzintubation','Naloxon zuerst','Volumen','BGA in 1h'],c:0,f:'Komat\u00f6s + pCO\u2082 120 + Apnoe: Atemwege sichern! Dann Naloxon + Flumazenil, ITS, Giftnotzentrale.'}],s:{ls:'Vigilanzminderung (Sopor-Koma)',lb:'Apnoe',bga:'Resp. Azidose bei Hyperkapnie + leichte Hypox\u00e4mie',dx:'Koma bei Medikamentenintoxikation',tx:'Schutzintubation. Naloxon + Flumazenil. Sterofundin. ITS. Giftnotzentrale.'}},
+{n:'Fall 4 \u2014 Hypothermie',a:'(unklar), W',lv:'expert',sc:'Winter. Patientin drau\u00dfen alkoholisiert vorgefunden. Kollaps.',kl:['Sehr verlangsamt, desorientiert','Lippenzyanose, extrem kalt','Bradyarrhythmie','AG versch\u00e4rft'],v:{pH:7.19,pCO2:50,SpO2:69,pO2:38,BE:-11,HCO3:22,Lak:6,Glu:22,K:2.6,Na:129,Cl:89,Hb:12.4},q:[{q:'Auff\u00e4lligkeiten NEBEN der BGA?',o:['Hypoglyk\u00e4mie (22!), Hypokali\u00e4mie, Hyponatri\u00e4mie, Hypochlor\u00e4mie','Nur niedriger pH','Alles normal au\u00dfer Laktat'],c:0,f:'BZ 22 = lebensbedrohlich! K 2,6, Na 129, Cl 89. Laktat 6.'},{q:'BGA-St\u00f6rung?',o:['Schwere met. Laktatazidose + Hyperkapnie (kombiniert)','Rein resp. Azidose','Met. Alkalose'],c:0,f:'BE -11 = metabolisch. Laktat 6. pCO\u2082 50 = zus\u00e4tzlich respiratorisch \u2192 kombiniert.'},{q:'Verdachtsdiagnose?',o:['Hypothermie + Hypoglyk\u00e4mie bei Alkoholintoxikation','Reine Alkoholvergiftung','Pneumonie'],c:0,f:'Extrem kalt + alkoholisiert + Hypoglyk\u00e4mie + Laktatazidose + Bradykardie.'}],s:{ls:'Kollaps',lb:'Verwirrtheit, Lippenzyanose, Bradyarrhythmie, Hypoglyk\u00e4mie!!!',bga:'Schwere met. Laktatazidose + Hypox\u00e4mie + Hyperkapnie + Elektrolytentgleisung',dx:'Hypothermie + Hypoglyk\u00e4mie i.R. Alkoholintoxikation',tx:'O\u2082, Glucose G40% iv, Erw\u00e4rmen, W\u00e4rme Infusionen, Antibiose, ITS.'}},
+{n:'Fall 5 \u2014 Exsikkose',a:'82j, W',lv:'basic',sc:'Kollaps. Seit Tagen kaum getrunken. Diuretika.',kl:['Exsikkose, stehende Hautfalten','Tachykardie','Verwirrt','Trockene Schleimh\u00e4ute'],v:{pH:7.52,pCO2:42,SpO2:96,pO2:78,BE:12,HCO3:34,Lak:1.4,Glu:95,K:2.8,Na:128,Cl:82,Hb:14.8},q:[{q:'Art der St\u00f6rung?',o:['Mittelschwere met. Alkalose (BE +12)','Resp. Alkalose','Met. Azidose','Normal'],c:0,f:'pH 7,52 = Alkalose. pCO\u2082 42 = normal. BE +12 = metabolisch! Mittelschwer.'},{q:'Elektrolyte?',o:['Hyponatri\u00e4mie, Hypokali\u00e4mie, Hypochlor\u00e4mie','Alles normal','Nur K niedrig'],c:0,f:'Na 128, K 2,8, Cl 82 \u2014 schwere Entgleisung bei Exsikkose + Diuretika!'},{q:'Therapie?',o:['NaCl 0,9% + KCl + Diuretika absetzen','Nur Beobachtung','Lasix','Antibiotika'],c:0,f:'Diuretika absetzen! NaCl 0,9% 500ml. KCl + Kalinor. Ggf. ITS.'}],s:{ls:'Kollaps',lb:'Exsikkose, Tachykardie',bga:'Mittelschwere met. Alkalose bei Elektrolytentgleisung',dx:'Schwere Elektrolytentgleisung bei Exsikkose',tx:'Diuretika absetzen. NaCl 0,9%. KCl + Kalinor. Ggf. ITS.'}},
+{n:'Fall 6 \u2014 Schockgeschehen',a:'49j, M',lv:'advanced',sc:'Kritischer Zustand. NEF: "Lungenembolie, lysieren." EKG: kein Isch\u00e4mie-Hinweis.',kl:['Agitiert, schreiend','Lippenzyanose, kaltschwei\u00dfig, grau','Extrem tachykard','Lungen: opB'],v:{pH:7.01,pCO2:18,SpO2:76,pO2:33,BE:-19,HCO3:14,Lak:12,Glu:80,K:4.1,Na:139,Cl:100,Hb:10.4},q:[{q:'Schweregrad?',o:['Lebensbedrohlich \u2014 BE -19, pH 7,01, Laktat 12!','Mittelschwer','Leicht'],c:0,f:'pH 7,01 + BE -19 + Laktat 12 = lebensbedrohlich!'},{q:'Art?',o:['Schwerste met. Laktatazidose + schwere Hypox\u00e4mie','Resp. Azidose','Met. Alkalose'],c:0,f:'BE -19 = metabolisch. Laktat 12 = Laktatazidose. pCO\u2082 18 = max. Kompensation.'},{q:'Sofort?',o:['O\u2082, Viggos, Volumen, Noradrenalin, AB, RUSH-Sono, ITS','CT zuerst','Lyse','BGA 1h'],c:0,f:'Schock! O\u2082, 2x Viggos, Sterofundin 2x1000ml, Noradrenalin, AB, RUSH-Sono, ITS.'}],s:{ls:'Unklares Schockgeschehen',lb:'Lippenzyanose, Schockzeichen',bga:'Schwerste met. Laktatazidose + schwere Hypox\u00e4mie',dx:'Unklares Schockgeschehen',tx:'O\u2082, 2x Viggos, Sterofundin, Noradrenalin, AB, RUSH-Sono, ITS.'}},
+{n:'Fall 7 \u2014 Ketoazidose',a:'20j, M',lv:'advanced',sc:'Seit 2 Wochen Abbau. Wesensver\u00e4ndert. "Atmet komisch" (Kussmaul).',kl:['Wach, unruhig, unscharf orientiert','Blass, extrem trocken','Tachykard','AF hoch, atmet flach (Kussmaul!)'],v:{pH:7.00,pCO2:6,SpO2:99,pO2:140,BE:-24,HCO3:7,Lak:16,Glu:'HI',K:7.2,Na:149,Cl:122,Hb:18.4},q:[{q:'BZ zeigt "HI". Bedeutung?',o:['BZ nicht messbar \u2014 \u00fcber 600 mg/dl','Ger\u00e4t kaputt','BZ normal'],c:0,f:'"HI" = au\u00dferhalb Messbereich. Bei pH 7,00 + BE -24 = DKA!'},{q:'St\u00f6rung?',o:['Schwerste met. Azidose, resp. maximal kompensiert (Kussmaul)','Resp. Azidose','Met. Alkalose'],c:0,f:'pH 7,00! BE -24! pCO\u2082 6 = max. Kompensation. K 7,2 = lebensbedrohlich!'},{q:'Diagnose?',o:['Ketoazidose bei DM Erstdiagnose','Sepsis','Lungenembolie'],c:0,f:'20j, Abbau, Kussmaul, BZ nicht messbar, BE -24, K 7,2 \u2192 DKA bei DM1 ED.'}],s:{ls:'Vigilanzminderung',lb:'Kussmaul, BZ nicht messbar, K 7,2',bga:'Schwerste met. Azidose, max. resp. kompensiert',dx:'Ketoazidose bei DM Erstdiagnose',tx:'2x Viggos \u2192 ZVK. Sterofundin. Insulin 2 IE/h. K-Monitoring.'}},
+{n:'Fall 8 \u2014 Herzinsuffizienz',a:'78j, W',lv:'expert',sc:'Hydropische Dekompensation. Bekannte Herzinsuffizienz.',kl:['Feuchte feinblasige RGs bds basal','Periphere \u00d6deme','Dyspnoe','Gestaute Halsvenen'],v:{pH:7.50,pCO2:48,SpO2:94,pO2:72,BE:10,HCO3:36,Lak:1.6,Glu:105,K:3.4,Na:132,Cl:88,Hb:10.2},q:[{q:'BGA-St\u00f6rung?',o:['Mittelschwere met. Alkalose + leichte resp. Kompensation','Resp. Azidose','Resp. Alkalose','Keine'],c:0,f:'pH 7,50 = Alkalose. BE +10 = metabolisch. pCO\u2082 48 = leichte resp. Kompensation.'},{q:'Ursache?',o:['Hypoalbumin\u00e4mie + Diuretika bei Herzinsuffizienz','Hyperventilation','Erbrechen'],c:0,f:'Schwere Hypoalbumin\u00e4mie bei HI \u2192 met. Alkalose.'},{q:'Therapie?',o:['O\u2082 reduzieren, Albumin-Substitution, HI-Management','Antibiotika','Lyse'],c:0,f:'Albumin-Substitution. HI-Management: HFpEF vs HFrEF. Bilanzierung.'}],s:{ls:'Hydropische Dekompensation',lb:'Feuchte RGs, \u00d6deme',bga:'Mittelschwere met. Alkalose + resp. Kompensation bei Hypoalbumin\u00e4mie',dx:'Dekompensierte HI + Hypoalbumin\u00e4mie',tx:'O\u2082 reduzieren. Albumin. HI-Management. Bilanzierung.'}},
+{n:'Fall 9 \u2014 Hyperventilationstetanie',a:'21j, M',lv:'grund',sc:'Tetanie und Kr\u00e4mpfe. Starke Luftnot.',kl:['Logorrhoisch, unsortiert','Pf\u00f6tchenstellung','Extrem tachykard','Lungen: opB'],v:{pH:7.67,pCO2:19,SpO2:100,pO2:144,BE:-2,HCO3:26,Lak:0.9,Glu:130,K:4.6,Na:139,Cl:101,Hb:15.4},q:[{q:'St\u00f6rung?',o:['Resp. Alkalose bei Hyperventilation','Met. Alkalose','Resp. Azidose','Met. Azidose'],c:0,f:'pH 7,67 = massive Alkalose. pCO\u2082 19 = respiratorisch. BE -2 = normal \u2192 akut!'},{q:'Warum Tetanie?',o:['Alkalose verschiebt ionisiertes Kalzium \u2192 Pf\u00f6tchenstellung','Hypokali\u00e4mie','Epilepsie'],c:0,f:'Bei Alkalose sinkt ionisiertes Ca \u2192 Tetanie (Karpopedalspasmen).'},{q:'Therapie?',o:['Beruhigen + T\u00fctenatmung','Intubation','Kalzium iv'],c:0,f:'Hyperventilationstetanie bei Panikattacke. Beruhigen, T\u00fctenatmung.'}],s:{ls:'Tetanie + Kr\u00e4mpfe',lb:'Pf\u00f6tchenstellung, Tachykardie',bga:'Resp. Alkalose bei Hyperventilation',dx:'Hyperventilationstetanie',tx:'Beruhigen. T\u00fctenatmung. Ggf. sedieren.'}},
+{n:'Fall 10 \u2014 Lungenembolie',a:'55j, W',lv:'advanced',sc:'Luftnot + rosa Auswurf. Immobil nach Flugreise.',kl:['Lippenzyanose','Tachypnoe, Tachykardie','Einseitig geschwollenes Bein','Lungen: frei!'],v:{pH:7.47,pCO2:30,SpO2:82,pO2:48,BE:-4,HCO3:21,Lak:4.2,Glu:120,K:4.0,Na:140,Cl:102,Hb:13.8},q:[{q:'BGA?',o:['Diskrete resp. Alkalose + Laktatazidose + schwere Hypox\u00e4mie','Met. Azidose','Resp. Azidose','Normal'],c:0,f:'Lungen frei aber schwere Hypox\u00e4mie (pO\u2082 48) + Laktat 4,2 \u2192 Perfusionsproblem!'},{q:'Warum Lungen frei + Hypox\u00e4mie?',o:['Lungenembolie: Perfusionsdefekt','COPD','Pneumonie'],c:0,f:'LE: Kein Ventilations- aber Perfusionsproblem. + Beinvenenthrombose.'},{q:'N\u00e4chste Schritte?',o:['O\u2082, Wells Score, D-Dimere, Heparin, CT-Angio','Nur Antibiotika','Abwarten'],c:0,f:'O\u2082, Wells Score, D-Dimere, RUSH-Sono, Heparin 5000 IE iv, CT-Angio, ITS.'}],s:{ls:'Luftnot + rosa Auswurf',lb:'Lippenzyanose, Lungen frei!',bga:'Diskrete resp. Alkalose + Laktatazidose + Hypox\u00e4mie',dx:'V.a. Lungenembolie',tx:'O\u2082, Wells Score, D-Dimere, Heparin 5000 IE, CT-Angio, ITS.'}},
+{n:'Fall 11 \u2014 AECOPD',a:'68j, M',lv:'basic',sc:'Luftnot + Beklemmung. COPD GOLD IV.',kl:['Ausgepr\u00e4gte Spastik','Giemen und Brummen','Atemhilfsmuskulatur','Zyanose'],v:{pH:7.28,pCO2:72,SpO2:86,pO2:55,BE:5,HCO3:33,Lak:1.8,Glu:140,K:4.2,Na:138,Cl:97,Hb:15.2},q:[{q:'St\u00f6rung?',o:['Resp. Azidose bei Hyperkapnie + met. Kompensation (BE +5)','Met. Azidose','Resp. Alkalose','Met. Alkalose'],c:0,f:'pH 7,28 = Azidose. pCO\u2082 72 = respiratorisch! BE +5 = Kompensation \u2192 chronisch mit akuter Verschlechterung.'},{q:'Therapie?',o:['Ggf. NIV, Steroide, Inhalation, Sekret-Management','Sofort Intubation','Nur AB','Nur O\u2082'],c:0,f:'NIV. Solu-Decortin 50mg. Inhalation Emser, Atrovent. Morphin 2-3mg. ACS ausschlie\u00dfen.'}],s:{ls:'Luftnot + Beklemmung',lb:'Ausgepr\u00e4gte Spastik',bga:'Resp. Azidose bei Hyperkapnie',dx:'AECOPD mit resp. Azidose',tx:'Ggf. NIV. Steroide. Inhalation. Morphin. ACS ausschlie\u00dfen.'}},
+{n:'Fall 12 \u2014 ACS + Lungen\u00f6dem',a:'65j, M',lv:'advanced',sc:'AP-Beschwerden seit 2h. Druck + Ausstrahlung linker Arm.',kl:['Schockzeichen','Feuchte RGs bds basal','Tachykardie','Periphere Zyanose'],v:{pH:7.25,pCO2:28,SpO2:80,pO2:45,BE:-10,HCO3:15,Lak:8.5,Glu:160,K:4.8,Na:141,Cl:104,Hb:12.8},q:[{q:'BGA?',o:['Met. Azidose (Laktatazidose) + Hypox\u00e4mie, resp. kompensiert','Resp. Azidose','Met. Alkalose','Keine'],c:0,f:'BE -10 = metabolisch. Laktat 8,5. pCO\u2082 28 = resp. Kompensation. Schwere Hypox\u00e4mie!'},{q:'Diagnose?',o:['V.a. ACS mit Lungen\u00f6dem','Pneumonie','COPD','LE'],c:0,f:'AP + feuchte RGs + Laktatazidose + Hypox\u00e4mie = V.a. ACS mit kardiogenem Lungen\u00f6dem.'},{q:'Therapie?',o:['O\u2082/NIV, Lasix 40-80mg, ASS 250mg + Heparin 5000 IE','Nur AB','Lyse','Abwarten'],c:0,f:'O\u2082 \u2192 NIV. Lasix. ASS + Heparin iv. 12-Kanal-EKG!'}],s:{ls:'AP-Beschwerden',lb:'Schockzeichen, feuchte RGs',bga:'Met. Azidose (Laktatazidose) + Hypox\u00e4mie',dx:'V.a. ACS mit Lungen\u00f6dem',tx:'O\u2082/NIV. Lasix. ASS + Heparin. EKG.'}},
+{n:'Fall 13 \u2014 Hyperkapnische Insuffizienz',a:'45j, M',lv:'advanced',sc:'Vigilanzminderung + Miosis (stecknadelkopf). V.a. Opioid-Intoxikation.',kl:['Spastik','Tachykardie','Miosis','Hypoventilation'],v:{pH:7.18,pCO2:95,SpO2:87,pO2:58,BE:2,HCO3:24,Lak:1.5,Glu:90,K:3.8,Na:136,Cl:98,Hb:14.0},q:[{q:'St\u00f6rung?',o:['Resp. Azidose bei schwerer Hyperkapnie','Met. Azidose','Resp. Alkalose','Met. Alkalose'],c:0,f:'pCO\u2082 95 = massiv resp.! BE +2 = normal \u2192 rein respiratorisch.'},{q:'Sofort?',o:['NIV, Naloxon + Flumazenil, ggf. Intubation','Nur Beobachtung','Antibiotika'],c:0,f:'NIV. Naloxon + Flumazenil. Ggf. cCT. ITS.'}],s:{ls:'Vigilanzminderung + Miosis',lb:'Spastik, Miosis',bga:'Resp. Azidose bei Hyperkapnie',dx:'Hyperkapnische resp. Insuffizienz bei V.a. Opioid-Intoxikation',tx:'NIV. Naloxon + Flumazenil. Ggf. cCT. ITS.'}},
+{n:'Fall 14 \u2014 Met. Alkalose bei Exsikkose',a:'75j, W',lv:'basic',sc:'Unklare AZ-Verschlechterung. Pflegeheim. Kaum Trinkmenge.',kl:['Exsikkose','Verwirrt, somnolent','Trockene Schleimh\u00e4ute','Tachykardie'],v:{pH:7.52,pCO2:44,SpO2:97,pO2:82,BE:11,HCO3:35,Lak:1.0,Glu:100,K:5.8,Na:152,Cl:118,Hb:16.2},q:[{q:'St\u00f6rung?',o:['Met. Alkalose + Hypernatri\u00e4mie, Hyperchlor\u00e4mie, Hyperkali\u00e4mie','Resp. Azidose','Resp. Alkalose','Normal'],c:0,f:'pH 7,52 = Alkalose. BE +11 = metabolisch. Na 152, Cl 118, K 5,8 \u2014 H\u00e4mokonzentration!'},{q:'Therapie?',o:['Glucose 5% (NICHT NaCl!), Resonium, Normalstation','NaCl 0,9%','Lasix','AB'],c:0,f:'Bei Hypernatri\u00e4mie: NICHT NaCl 0,9%! Glucose 5% 1000ml. Resonium.'}],s:{ls:'AZ-Verschlechterung',lb:'Exsikkose',bga:'Met. Alkalose + Elektrolytentgleisung',dx:'Met. Alkalose bei Exsikkose',tx:'Glucose 5% 1000ml. Resonium. Normalstation.'}},
+{n:'Fall 15 \u2014 Hypoalbumin\u00e4mische Alkalose',a:'80j, W',lv:'expert',sc:'Dyspnoe + Anasarka. Herzinsuffizienz. Dekubitus Grad IV sacral.',kl:['Exsikkose + Tachykardie','Anasarka','Dekubitus Grad IV sacral','Massiv reduzierter AZ'],v:{pH:7.56,pCO2:46,SpO2:95,pO2:75,BE:14,HCO3:40,Lak:1.8,Glu:95,K:5.6,Na:150,Cl:116,Hb:9.8},q:[{q:'St\u00f6rung?',o:['Schwere met. Alkalose (BE +14) + Elektrolytentgleisung','Resp. Azidose','Resp. Alkalose','Keine'],c:0,f:'pH 7,56 = schwer! BE +14 = metabolisch. Schwere Hypoalbumin\u00e4mie.'},{q:'Unterschied zu Fall 14?',o:['Hypoalbumin\u00e4mie durch Dekubitus als Hauptursache','Gleiche Ursache','Rein renal'],c:0,f:'Dekubitus IV \u2192 massiver Eiwei\u00dfverlust \u2192 Hypoalbumin\u00e4mie.'},{q:'Therapie?',o:['Torem \u2192 Lasix, Albumin-Substitution, Glucose 5%, Bilanzierung','Nur Diuretika','AB'],c:0,f:'Torem Pause \u2192 Lasix 60mg/d. Albumin. Glucose 5%. Bilanzierung. Ggf. ITS.'}],s:{ls:'Dyspnoe + Anasarka',lb:'Exsikkose, Dekubitus',bga:'Schwere met. Alkalose + Elektrolytentgleisung',dx:'Schwere met. Alkalose bei Hypoalbumin\u00e4mie',tx:'Lasix. Albumin-Substitution. Glucose 5%. Bilanzierung. Ggf. ITS.'}},
+{n:'Fall 16 \u2014 Gemischte Azidose',a:'70j, M',lv:'expert',sc:'Sopor\u00f6s-komat\u00f6s. Keine Fremdanamnese. Pflegeheim.',kl:['Bradykardie','Exsikkose','Sopor\u00f6s-komat\u00f6s','Hypoventilation'],v:{pH:7.22,pCO2:62,SpO2:85,pO2:50,BE:-4,HCO3:18,Lak:2.8,Glu:35,K:3.2,Na:131,Cl:94,Hb:11.8},q:[{q:'Was ist besonders?',o:['GEMISCHTE Azidose: resp. (pCO\u2082 62) UND met. (BE -4)','Rein respiratorisch','Rein metabolisch'],c:0,f:'BEIDE Komponenten pathologisch \u2192 gemischte Azidose!'},{q:'Was f\u00e4llt noch auf?',o:['Hypoglyk\u00e4mie (Glu 35!) \u2014 sofort behandeln','Nur pH','Alles normal'],c:0,f:'Glu 35 = schwere Hypoglyk\u00e4mie!'},{q:'Sofort?',o:['NIV, Glucose G40%, Naloxon + Flumazenil, Sterofundin, ITS','Nur Beobachtung','AB'],c:0,f:'NIV. Glucose G40%. Naloxon + Flumazenil. Sterofundin. Ggf. cCT. ITS.'}],s:{ls:'Vigilanzminderung',lb:'Bradykardie, Exsikkose',bga:'Gemischte Azidose (resp. + met.)',dx:'Vigilanzminderung bei Hypoglyk\u00e4mie + gemischte Azidose',tx:'NIV. Glucose G40%. Naloxon + Flumazenil. Sterofundin. cCT. ITS.'}},
+{n:'Fall 17 \u2014 Hyperkali\u00e4mie-Bradykardie',a:'82j, M',lv:'advanced',sc:'Hypervigilit\u00e4t. Schockzeichen. Niereninsuffizienz + Spironolacton.',kl:['Schockzeichen','Bradykardie','Hypervigilant','Periphere \u00d6deme'],v:{pH:7.28,pCO2:40,SpO2:94,pO2:76,BE:-8,HCO3:18,Lak:3.2,Glu:110,K:7.8,Na:138,Cl:106,Hb:12.2},q:[{q:'St\u00f6rung + Auff\u00e4lligkeit?',o:['Met. Azidose, NICHT resp. kompensiert + K 7,8!','Resp. Azidose','Met. Alkalose','Keine'],c:0,f:'BE -8 = metabolisch. pCO\u2082 40 = NORMAL \u2192 keine Kompensation! K 7,8 = lebensbedrohlich!'},{q:'Warum ist fehlende Kompensation gef\u00e4hrlich?',o:['Ohne Kompensation verschlechtert sich pH schneller \u2014 akut!','Nicht wichtig','Nieren kompensieren'],c:0,f:'Keine resp. Kompensation = akut + gef\u00e4hrlich.'},{q:'Therapie Hyperkali\u00e4mie?',o:['12-Kanal-EKG, Glucose+Insulin, Resonium, Calciumgluconat, Salbutamol','Nur Furosemid','Abwarten','K oral'],c:0,f:'EKG! Glucose+Insulin. Resonium. Bei EKG-Ver\u00e4nderungen: Calciumgluconat. Medikamentencheck (Spironolacton!). ITS.'}],s:{ls:'Hypervigilit\u00e4t',lb:'Schockzeichen, Bradykardie, K 7,8',bga:'Met. Azidose, nicht kompensiert + Hyperkali\u00e4mie',dx:'Symptomatische Bradykardie bei Hyperkali\u00e4mie',tx:'EKG. Glucose+Insulin. Resonium. Calciumgluconat. Salbutamol. Medikamentencheck. ITS.'}},
+{n:'Fall 18 \u2014 Schlaganfall',a:'62j, M',lv:'grund',sc:'Dysarthrie und Agitation. Pl\u00f6tzlicher Beginn vor 45 Min.',kl:['Fokale Defizite (Dysarthrie, Hemiparese)','Agitiert','Hypertensiv','Lungen: opB'],v:{pH:7.51,pCO2:26,SpO2:98,pO2:95,BE:-1,HCO3:22,Lak:1.2,Glu:145,K:4.0,Na:140,Cl:101,Hb:14.4},q:[{q:'St\u00f6rung?',o:['Resp. Alkalose \u2014 stressbedingt','Met. Azidose','Resp. Azidose','Keine'],c:0,f:'pH 7,51 = Alkalose. pCO\u2082 26 = resp. Die Alkalose ist hier Nebenbefund!'},{q:'Das eigentliche Problem?',o:['V.a. Schlaganfall \u2014 sofort cCT!','BGA behandeln','Hyperventilationstetanie','Panikattacke'],c:0,f:'Dysarthrie + Hemiparese + pl\u00f6tzlich = V.a. Schlaganfall! Sofort cCT nativ + Angio!'}],s:{ls:'Dysarthrie + Agitation',lb:'Fokale neurologische Defizite',bga:'Resp. Alkalose (stressbedingt)',dx:'V.a. Schlaganfall',tx:'Atemwege frei. Vitalzeichen. cCT nativ + Angio.'}}
+];
+
+// Vitals normal ranges for coloring
+const NR={pH:[7.35,7.45],pCO2:[35,45],SpO2:[92,999],pO2:[70,999],BE:[-2,2],HCO3:[21,26],Lak:[0,2],Glu:[70,120],K:[3.6,5.0],Na:[135,145],Cl:[95,112],Hb:[12,18]};
+const VN={pCO2:'pCO\u2082',pO2:'pO\u2082',SpO2:'SpO\u2082',HCO3:'HCO\u2083',Lak:'Laktat'};
+
+let cIdx=0,qIdx=0,cScore={ok:0,total:0},cAnswered=false,activeFilter='alle',filteredCases=[];
+
+function initCases(){
+  renderFilters();
+  filterCases();
+  if(cIdx>=filteredCases.length)cIdx=0;
+  renderProg();renderCase();
+}
+function renderFilters(){
+  const el=document.getElementById('cFilters');
+  el.innerHTML='';
+  ['alle','grund','basic','advanced','expert'].forEach(f=>{
+    const b=document.createElement('button');
+    b.className='fbtn'+(activeFilter===f?' on':'');
+    b.textContent=f==='alle'?'Alle (18)':f==='grund'?'Grundlage':f.charAt(0).toUpperCase()+f.slice(1);
+    b.onclick=()=>{activeFilter=f;cIdx=0;qIdx=0;initCases()};
+    el.appendChild(b);
+  });
+}
+function filterCases(){
+  filteredCases=activeFilter==='alle'?C:C.filter(c=>c.lv===activeFilter);
+}
+function renderProg(){
+  const el=document.getElementById('cProg');el.innerHTML='';
+  filteredCases.forEach((_,i)=>{const p=document.createElement('div');p.className='pip'+(i<cIdx?' done':'')+(i===cIdx?' now':'');el.appendChild(p)});
+}
+function renderCase(){
+  if(cIdx>=filteredCases.length){showFinal();return}
+  const c=filteredCases[cIdx];cAnswered=false;
+  const box=document.getElementById('caseBox');
+  let vh='';
+  for(const[k,val]of Object.entries(c.v)){
+    const nr=NR[k];const num=typeof val==='number'?val:null;
+    let bad=false;if(num!==null&&nr){bad=num<nr[0]||num>nr[1]}if(typeof val==='string')bad=true;
+    const display=VN[k]||k;
+    vh+=`<div class="vital ${bad?'bad':(num?'good':'')}"><div class="vl">${display}</div><div class="vv">${typeof val==='number'?(k==='pH'?val.toFixed(2):val):val}</div><div class="vn">${nr?nr[0]+'-'+nr[1]:''}</div></div>`;
+  }
+  const kh=c.kl.map(k=>'<div class="klinik-i">\u2022 '+k+'</div>').join('');
+  const q=c.q[qIdx];const ltrs='ABCD';
+  const qh=q.o.map((o,i)=>`<button class="ans" id="ca-${i}" onclick="caseAns(${i})"><span class="ltr">${ltrs[i]}</span><span>${o}</span></button>`).join('');
+  const lvBadge=c.lv==='grund'?'green':c.lv==='basic'?'blue':c.lv==='advanced'?'amber':'red';
+
+  box.innerHTML=`
+    <div class="case-card fadein">
+      <div class="case-head"><div><div class="case-title">${c.n}</div><div class="case-meta">${c.a}</div></div><div style="display:flex;gap:6px;align-items:center"><span class="badge ${lvBadge}">${c.lv==='grund'?'Grundlage':c.lv.charAt(0).toUpperCase()+c.lv.slice(1)}</span><span class="case-num">${cIdx+1}/${filteredCases.length}</span></div></div>
+      <div class="scenario">${c.sc}</div>
+      <div class="klinik"><div class="klinik-t">Klinische Befunde</div>${kh}</div>
+      <div style="height:12px"></div>
+      <div class="vitals">${vh}</div>
+    </div>
+    <div class="qcard fadein"><div class="stag">Frage ${qIdx+1} von ${c.q.length}</div><h3>${q.q}</h3><div class="answers">${qh}</div></div>
+    <div id="cfb"></div><div id="csol"></div>
+    <div id="cnext" style="display:none" class="controls"><button class="btn primary" onclick="nextStep()">Weiter \u2192</button></div>`;
+}
+function caseAns(i){
+  if(cAnswered)return;cAnswered=true;
+  const c=filteredCases[cIdx],q=c.q[qIdx],ok=i===q.c;
+  cScore.total++;if(ok)cScore.ok++;
+  document.querySelectorAll('.ans').forEach((a,j)=>{a.style.pointerEvents='none';if(j===q.c)a.classList.add('right');if(j===i&&!ok)a.classList.add('wrong')});
+  document.getElementById('cfb').innerHTML=`<div class="fb ${ok?'ok':'no'}"><h4>${ok?'\u2705 Richtig!':'\u274c Nicht ganz'}</h4><p>${q.f}</p></div>`;
+  if(qIdx===c.q.length-1){
+    document.getElementById('csol').innerHTML=`<div class="sol-card fadein"><h3>Vollst\u00e4ndige L\u00f6sung</h3>
+      <div class="sol-row"><div class="sol-lb">Leitsymptom</div><div class="sol-vl">${c.s.ls}</div></div>
+      <div class="sol-row"><div class="sol-lb">Leitbefund</div><div class="sol-vl">${c.s.lb}</div></div>
+      <div class="sol-row"><div class="sol-lb">BGA</div><div class="sol-vl">${c.s.bga}</div></div>
+      <div class="sol-row"><div class="sol-lb">Diagnose</div><div class="sol-vl">${c.s.dx}</div></div>
+      <div class="sol-row"><div class="sol-lb">Therapie</div><div class="sol-vl">${c.s.tx}</div></div></div>`;
+  }
+  document.getElementById('cnext').style.display='flex';
+}
+function nextStep(){
+  qIdx++;if(qIdx>=filteredCases[cIdx].q.length){cIdx++;qIdx=0;renderProg()}
+  renderCase();
+}
+function showFinal(){
+  go('done');
+  const pct=cScore.total>0?Math.round((cScore.ok/cScore.total)*100):0;
+  let grade,gc;
+  if(pct>=90){grade='Ausgezeichnet!';gc='var(--green)'}else if(pct>=70){grade='Gut gemacht!';gc='var(--blue)'}else if(pct>=50){grade='Solide Basis!';gc='var(--amber)'}else{grade='Weiter \u00fcben!';gc='var(--red)'}
+  document.getElementById('finalScore').innerHTML=`
+    <div class="card" style="text-align:center">
+      <div style="font-size:42px;margin-bottom:8px;color:${gc}">\u2605</div>
+      <div class="big" style="color:${gc}">${pct}%</div>
+      <div style="font-size:15px;font-weight:600;color:${gc};margin:6px 0">${grade}</div>
+      <p style="font-size:13px;color:var(--text2)">${cScore.ok} von ${cScore.total} Fragen richtig</p>
+      <div class="card" style="text-align:left;background:var(--surface);border:none;margin-top:16px">
+        <h3>3 Take-Aways</h3>
+        <p style="margin-bottom:6px"><span class="hl">1. pH zuerst:</span> <7,35 = Azidose, >7,45 = Alkalose</p>
+        <p style="margin-bottom:6px"><span class="hl">2. pCO\u2082 (Lunge) + BE (Stoffwechsel)</span> \u2014 wer ist schuld?</p>
+        <p><span class="hl">3. Kompensation?</span> Akut (keine) ist dringender als chronisch!</p>
+      </div>
+      <div class="controls" style="margin-top:16px">
+        <button class="btn ghost" onclick="cIdx=0;qIdx=0;cScore={ok:0,total:0};go('cases')">\u21bb Nochmal</button>
+        <button class="btn primary" onclick="go('start')">\u2190 \u00dcbersicht</button>
+      </div>
+    </div>`;
+}
+
+// INIT
+loadAlgo('acid');
+</script>
+</body>
+</html>

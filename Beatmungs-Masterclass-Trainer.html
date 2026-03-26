@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Beatmung Masterclass — Fit4Dienst</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+:root{--bg:#F8FAFC;--card:#FFF;--surface:#F1F5F9;--surface2:#E2E8F0;--text:#1E293B;--text2:#475569;--text3:#94A3B8;--red:#DC2626;--red-s:rgba(220,38,38,.08);--red-b:rgba(220,38,38,.15);--blue:#2563EB;--blue-s:rgba(37,99,235,.08);--green:#16A34A;--green-s:rgba(22,163,74,.08);--amber:#D97706;--amber-s:rgba(217,119,6,.08);--purple:#7C3AED;--purple-s:rgba(124,58,237,.08);--teal:#0D9488;--teal-s:rgba(13,148,136,.08);--r:12px;--shadow:0 1px 3px rgba(0,0,0,.08)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.topnav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--surface2);height:52px}
+.logo{font-family:'Space Grotesk';font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px;color:var(--text)}
+.logo svg{width:32px;height:32px}
+.timer{font-family:'Space Grotesk';font-size:14px;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:5px}
+.timer svg{width:15px;height:15px}
+.timer.warn{color:var(--red)}
+.dtabs{display:none;gap:2px;background:var(--surface);border-radius:8px;padding:2px}
+@media(min-width:769px){.dtabs{display:flex}}
+.dtab{padding:6px 12px;border-radius:6px;border:none;background:transparent;color:var(--text2);font-family:'Inter';font-size:11px;font-weight:500;cursor:pointer;transition:.2s;white-space:nowrap}
+.dtab:hover{color:var(--text)}
+.dtab.active{background:var(--card);color:var(--text);box-shadow:var(--shadow)}
+.bnav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);border-top:1px solid var(--surface2);padding:4px 0;padding-bottom:max(4px,env(safe-area-inset-bottom))}
+@media(min-width:769px){.bnav{display:none}}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;cursor:pointer;border:none;background:none;color:var(--text3);font-size:8px;font-weight:500;transition:.2s}
+.bnav-item.active{color:var(--teal)}
+.bnav-item svg{width:20px;height:20px}
+.main{padding:60px 16px 80px;max-width:900px;margin:0 auto}
+@media(min-width:769px){.main{padding:68px 24px 40px}}
+.view{display:none}.view.active{display:block}
+.card{background:var(--card);border:1px solid var(--surface2);border-radius:var(--r);padding:20px;margin-bottom:12px;box-shadow:var(--shadow)}
+.card h3{font-family:'Space Grotesk';font-size:16px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.card p{font-size:14px;color:var(--text2);line-height:1.7}
+.hl{color:var(--text);font-weight:600}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.badge.red{background:var(--red-s);color:var(--red)}.badge.blue{background:var(--blue-s);color:var(--blue)}.badge.green{background:var(--green-s);color:var(--green)}.badge.amber{background:var(--amber-s);color:var(--amber)}.badge.purple{background:var(--purple-s);color:var(--purple)}.badge.teal{background:var(--teal-s);color:var(--teal)}
+.hdr{text-align:center;margin-bottom:28px}
+.hdr h1{font-family:'Space Grotesk';font-size:24px;font-weight:700;margin:8px 0 4px}
+.hdr p{color:var(--text2);font-size:13px;max-width:520px;margin:0 auto;line-height:1.6}
+.ntable{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+.ntable th{text-align:left;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;border-bottom:2px solid var(--surface2)}
+.ntable td{padding:9px 10px;border-bottom:1px solid var(--surface)}
+.ntable .pn{font-weight:600;font-family:'Space Grotesk'}
+.ntable .pr{color:var(--text2)}
+.ntable .pm{color:var(--text3);font-size:11px}
+.lvl-grid{display:flex;flex-direction:column;gap:12px;margin:24px 0}
+@media(min-width:640px){.lvl-grid{flex-direction:row;gap:14px}}
+.lvl-card{background:var(--card);border:1px solid var(--surface2);border-radius:16px;padding:24px 20px;cursor:pointer;transition:.25s;position:relative;overflow:hidden;flex:1;min-height:140px}
+.lvl-card:hover{border-color:var(--text3);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.1)}
+.lvl-card .lnum{font-family:'Space Grotesk';font-size:64px;font-weight:800;opacity:.06;position:absolute;top:-8px;right:8px;line-height:1}
+.lvl-card .licon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.lvl-card .licon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
+.lvl-card h4{font-family:'Space Grotesk';font-size:15px;font-weight:700;margin:6px 0 4px}
+.lvl-card p{font-size:12px;color:var(--text2);line-height:1.6}
+.ic{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.ic.red{background:var(--red-s);color:var(--red)}.ic.blue{background:var(--blue-s);color:var(--blue)}.ic.green{background:var(--green-s);color:var(--green)}.ic.amber{background:var(--amber-s);color:var(--amber)}.ic.purple{background:var(--purple-s);color:var(--purple)}.ic.teal{background:var(--teal-s);color:var(--teal)}
+.infobox{background:var(--surface);border-radius:10px;padding:14px 16px;margin:10px 0;border-left:3px solid var(--blue)}
+.infobox.warn{border-left-color:var(--amber)}.infobox.tip{border-left-color:var(--green)}.infobox.danger{border-left-color:var(--red)}.infobox.teal{border-left-color:var(--teal)}
+.infobox .ib-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.infobox p{font-size:13px;color:var(--text2);line-height:1.6}
+.formula{background:var(--card);border:2px solid var(--surface2);border-radius:10px;padding:16px;text-align:center;margin:12px 0}
+.formula .fx{font-family:'Space Grotesk';font-size:20px;font-weight:700;color:var(--text);letter-spacing:1px}
+.formula .fl{font-size:11px;color:var(--text3);margin-top:4px}
+.komp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+@media(max-width:640px){.komp-grid{grid-template-columns:1fr}}
+.komp-card{background:var(--card);border:1px solid var(--surface2);border-radius:10px;padding:14px;box-shadow:var(--shadow)}
+.komp-card .kh{font-family:'Space Grotesk';font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.komp-card .kvals{font-size:12px;color:var(--text2);line-height:1.8}
+.komp-card .kex{font-size:11px;color:var(--text3);margin-top:6px;line-height:1.5;font-style:italic}
+/* ALGO STEPS */
+.algo-box{max-width:600px;margin:0 auto}
+.algo-step{margin-bottom:6px;opacity:.3;transform:translateY(4px);transition:.4s cubic-bezier(.16,1,.3,1)}
+.algo-step.show{opacity:1;transform:translateY(0)}
+.algo-node{background:var(--card);border:1px solid var(--surface2);border-radius:var(--r);padding:14px 18px;text-align:center;transition:.3s;box-shadow:var(--shadow)}
+.algo-node.teal{border-color:var(--teal);background:var(--teal-s)}
+.algo-node.red{border-color:var(--red);background:var(--red-s)}
+.algo-node.blue{border-color:var(--blue);background:var(--blue-s)}
+.algo-node.ok{border-color:var(--green);background:var(--green-s)}
+.algo-node.amber{border-color:var(--amber);background:var(--amber-s)}
+.algo-node .lb{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+.algo-node .vl{font-family:'Space Grotesk';font-size:17px;font-weight:700}
+.algo-node .sb{font-size:12px;color:var(--text2);margin-top:2px}
+.algo-arrow{text-align:center;padding:3px 0;color:var(--text3);font-size:16px;opacity:0;transition:.3s}
+.algo-arrow.show{opacity:1}
+.algo-btns{display:flex;gap:10px;justify-content:center;margin:8px 0;flex-wrap:wrap}
+.abtn{padding:8px 20px;border-radius:8px;border:2px solid;font-family:'Inter';font-size:12px;font-weight:600;cursor:pointer;transition:.2s;background:transparent}
+.abtn.oxy{border-color:var(--blue);color:var(--blue)}.abtn.oxy:hover{background:var(--blue);color:#fff}
+.abtn.vent{border-color:var(--amber);color:var(--amber)}.abtn.vent:hover{background:var(--amber);color:#fff}
+.abtn.ok{border-color:var(--green);color:var(--green)}.abtn.ok:hover{background:var(--green);color:#fff}
+.abtn.low{border-color:var(--red);color:var(--red)}.abtn.low:hover{background:var(--red);color:#fff}
+.abtn.high{border-color:var(--amber);color:var(--amber)}.abtn.high:hover{background:var(--amber);color:#fff}
+.abtn:disabled{opacity:.2;cursor:default}.abtn:disabled:hover{background:transparent;color:inherit}
+/* RASS SLIDER */
+.rass-box{text-align:center;max-width:420px;margin:0 auto 20px}
+.rass-num{font-family:'Space Grotesk';font-size:48px;font-weight:800;transition:.3s}
+.rass-label{font-size:14px;font-weight:600;margin:4px 0;transition:.3s}
+.rass-slider{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;background:linear-gradient(90deg,#1E293B,#475569,#94A3B8,#22C55E,#FBBF24,#F97316,#EF4444);outline:none;margin:10px 0}
+.rass-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--text);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+/* CASE */
+.case-card{background:var(--card);border:1px solid var(--surface2);border-radius:16px;padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
+.case-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.case-title{font-family:'Space Grotesk';font-size:18px;font-weight:700}
+.case-meta{font-size:12px;color:var(--text2);margin-top:2px}
+.case-num{font-size:10px;font-weight:600;padding:3px 8px;border-radius:12px;background:var(--surface);color:var(--text2)}
+.vitals{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:6px;margin-bottom:14px}
+.vital{background:var(--surface);border-radius:8px;padding:8px;text-align:center}
+.vital .vl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.3px}
+.vital .vv{font-family:'Space Grotesk';font-size:16px;font-weight:700;margin:2px 0}
+.vital .vn{font-size:8px;color:var(--text3)}
+.vital.bad .vv{color:var(--red)}.vital.good .vv{color:var(--green)}
+.scenario{background:var(--surface);border-radius:8px;padding:12px;font-size:13px;color:var(--text2);line-height:1.6}
+.scenario strong{color:var(--text)}
+.klinik{margin-top:10px;background:var(--surface);border-radius:8px;padding:12px}
+.klinik-t{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.klinik-i{font-size:12px;color:var(--text2);line-height:1.5;padding:2px 0}
+.vent-params{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px;margin:10px 0}
+.vp{background:var(--teal-s);border:1px solid rgba(13,148,136,.2);border-radius:8px;padding:8px;text-align:center}
+.vp .vpl{font-size:9px;color:var(--teal);text-transform:uppercase;letter-spacing:.3px;font-weight:600}
+.vp .vpv{font-family:'Space Grotesk';font-size:16px;font-weight:700;color:var(--teal);margin:2px 0}
+.qcard{background:var(--card);border:1px solid var(--surface2);border-radius:14px;padding:20px;margin-bottom:10px;box-shadow:var(--shadow)}
+.qcard h3{font-size:14px;font-weight:600;margin-bottom:12px}
+.qcard .stag{font-size:10px;font-weight:600;color:var(--amber);margin-bottom:4px}
+.answers{display:flex;flex-direction:column;gap:6px}
+.ans{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;background:var(--surface);border:1px solid transparent;color:var(--text);font-size:12px;cursor:pointer;transition:.2s;text-align:left;font-family:'Inter';line-height:1.4}
+.ans:hover{border-color:var(--surface2);background:var(--surface2)}
+.ans .ltr{width:22px;height:22px;border-radius:6px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;color:var(--text3);flex-shrink:0}
+.ans.right{border-color:var(--green);background:var(--green-s)}.ans.right .ltr{background:var(--green);color:#fff}
+.ans.wrong{border-color:var(--red);background:var(--red-s)}.ans.wrong .ltr{background:var(--red);color:#fff}
+.fb{background:var(--card);border:1px solid var(--surface2);border-radius:var(--r);padding:16px;margin-top:10px}
+.fb.ok{border-color:var(--green);background:var(--green-s)}.fb.no{border-color:var(--red);background:var(--red-s)}
+.fb h4{font-size:13px;font-weight:600;margin-bottom:4px}.fb p{font-size:12px;color:var(--text2);line-height:1.6}
+.sol-card{background:var(--card);border:2px solid var(--green);border-radius:14px;padding:20px;margin-top:14px}
+.sol-card h3{font-family:'Space Grotesk';font-size:15px;font-weight:700;margin-bottom:12px;color:var(--green)}
+.sol-row{display:grid;grid-template-columns:110px 1fr;gap:6px;padding:7px 0;border-bottom:1px solid var(--surface)}.sol-row:last-child{border:none}
+.sol-lb{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase}.sol-vl{font-size:12px;color:var(--text);line-height:1.5}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.fbtn{padding:6px 14px;border-radius:20px;border:1px solid var(--surface2);background:var(--card);color:var(--text2);font-size:11px;font-weight:500;cursor:pointer;transition:.2s;font-family:'Inter'}
+.fbtn:hover{border-color:var(--text3)}.fbtn.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+.prog{display:flex;gap:3px;margin-bottom:20px}
+.pip{flex:1;height:3px;border-radius:2px;background:var(--surface2);transition:.3s}.pip.done{background:var(--green)}.pip.now{background:var(--blue)}
+.btn{padding:10px 20px;border-radius:8px;font-family:'Inter';font-size:13px;font-weight:600;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:6px;border:none}
+.btn.primary{background:var(--teal);color:#fff}.btn.primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn.ghost{background:transparent;border:1px solid var(--surface2);color:var(--text2)}.btn.ghost:hover{border-color:var(--text3);color:var(--text)}
+.controls{display:flex;justify-content:center;gap:8px;margin-top:24px}
+.toggle{display:flex;gap:6px;justify-content:center;margin-bottom:16px}
+.toggle .btn{font-size:12px;padding:8px 20px;border:2px solid var(--surface2);background:transparent;color:var(--text2)}
+.toggle .btn.on{border-color:var(--teal);color:var(--teal);background:var(--teal-s)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}.fadein{animation:fadeUp .4s cubic-bezier(.16,1,.3,1)}
+@media(max-width:640px){.vitals{grid-template-columns:repeat(3,1fr)}.hdr h1{font-size:20px}.sol-row{grid-template-columns:90px 1fr}.vent-params{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div class="topnav">
+  <div class="logo">
+    <svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#4A8DB7"/>
+      <line x1="4" y1="23" x2="28" y2="23" stroke="#FCD34D" stroke-width="0.5" opacity=".5"/>
+      <path d="M4 23 Q5 22 6 17 Q7 10 8 10 Q9 10 10 18 Q11 23 12 23 Q13 23 14 17 Q15 9 16 9 Q17 9 18 17 Q19 23 20 23 Q21 23 22 16 Q23 9 24 9 Q25 9 26 18 Q27 23 28 23" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path d="M5 23 Q6 17 7 12 Q8 10 8 10 Q9 10 10 18 Q11 23 12 23 Z" fill="#FCD34D" opacity=".4"/>
+      <path d="M13 23 Q14 17 15 11 Q16 9 16 9 Q17 9 18 17 Q19 23 20 23 Z" fill="#FCD34D" opacity=".4"/>
+      <path d="M21 23 Q22 16 23 11 Q24 9 24 9 Q25 9 26 18 Q27 23 28 23 Z" fill="#FCD34D" opacity=".4"/>
+    </svg>
+    Beatmung Masterclass
+  </div>
+  <div class="dtabs" id="dtabs"></div>
+  <div class="timer" id="timerBox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span id="timerD">90:00</span></div>
+</div>
+<div class="bnav" id="bnav"></div>
+<div class="main">
+
+<!-- ===== START ===== -->
+<div class="view active" id="v-start">
+  <div class="hdr">
+    <svg viewBox="0 0 48 48" fill="none" style="width:48px;height:48px;margin:0 auto 8px;display:block">
+      <rect width="48" height="48" rx="14" fill="#4A8DB7"/>
+      <!-- PEEP baseline -->
+      <line x1="5" y1="35" x2="43" y2="35" stroke="#FCD34D" stroke-width="0.7" opacity=".6"/>
+      <!-- time axis -->
+      <line x1="5" y1="39" x2="43" y2="39" stroke="#fff" stroke-width="0.8" opacity=".3"/>
+      <!-- smooth pressure curves — bell-shaped mandatory breaths -->
+      <path d="M5 35 Q6 35 7 34 Q8 30 9 20 Q10 13 11 13 Q12 13 13 22 Q14 33 15 35 Q16 35 17 35 Q18 35 19 34 Q20 28 21 18 Q22 12 23 12 Q24 12 25 19 Q26 30 27 35 Q28 35 29 35 Q30 35 31 33 Q32 26 33 16 Q34 12 35 12 Q36 12 37 20 Q38 31 39 35 Q40 35 43 35" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <!-- yellow fill under curves -->
+      <path d="M7 35 Q8 30 9 20 Q10 13 11 13 Q12 13 13 22 Q14 33 15 35 Z" fill="#FCD34D" opacity=".45"/>
+      <path d="M19 35 Q20 28 21 18 Q22 12 23 12 Q24 12 25 19 Q26 30 27 35 Z" fill="#FCD34D" opacity=".45"/>
+      <path d="M31 35 Q32 26 33 16 Q34 12 35 12 Q36 12 37 20 Q38 31 39 35 Z" fill="#FCD34D" opacity=".45"/>
+    </svg>
+    <div class="badge blue">&#129504; Fit4Dienst</div>
+    <h1>Grundlagen der Beatmung</h1>
+    <p>Invasiv und nichtinvasiv &mdash; in 6 Stufen. Respiratorische Insuffizienz. Sauerstofftransport. Beatmungsformen. Parameter. 5-Schritte-Einstellung. Korrekturalgorithmus. 10 Fallbeispiele. F&uuml;r Pflegekr&auml;fte und Assistenz&auml;rzte im 1.&ndash;2. WB-Jahr.</p>
+  </div>
+  <div class="lvl-grid">
+    <div class="lvl-card" onclick="go('grund')"><div class="lnum">1</div>
+      <div class="licon" style="background:var(--green-s);color:var(--green)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg></div>
+      <div class="badge green">Grundlage</div><h4>Warum beatmen wir?</h4>
+      <p>Akute resp. Insuffizienz. Typ I vs Typ II. O&#8322;-Transport (DO&#8322;). Die 3 Stellschrauben.</p>
+    </div>
+    <div class="lvl-card" onclick="go('forms')"><div class="lnum">2</div>
+      <div class="licon" style="background:var(--amber-s);color:var(--amber)"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+      <div class="badge amber">Advanced</div><h4>Formen &amp; Parameter</h4>
+      <p>NIV vs Invasiv. CPAP, ASB, BiPAP, IPPV. Alle Parameter von Vt bis Compliance.</p>
+    </div>
+    <div class="lvl-card" onclick="go('expert')"><div class="lnum">3</div>
+      <div class="licon" style="background:var(--purple-s);color:var(--purple)"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg></div>
+      <div class="badge purple">Expert</div><h4>Sedierung &amp; Lungenmechanik</h4>
+      <p>RASS-Skala. Sedierungs-Combos. Compliance &amp; Resistance verstehen.</p>
+    </div>
+    <div class="lvl-card" onclick="go('algo1')"><div class="lnum">4</div>
+      <div class="licon" style="background:var(--teal-s);color:var(--teal)"><svg viewBox="0 0 24 24"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 01-9 9"/></svg></div>
+      <div class="badge teal">Algorithmus 1</div><h4>5-Schritte-Einstellung</h4>
+      <p>Interaktiver Algorithmus: Pathophysiologie &rarr; Vt &rarr; FiO&#8322; &rarr; PEEP &rarr; Pinsp/AF/I:E.</p>
+    </div>
+    <div class="lvl-card" onclick="go('algo2')"><div class="lnum">5</div>
+      <div class="licon" style="background:var(--blue-s);color:var(--blue)"><svg viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.78 7.78 5.5 5.5 0 017.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
+      <div class="badge blue">Algorithmus 2</div><h4>Korrektur nach aBGA</h4>
+      <p>Interaktiver Korrekturalgorithmus. Vt pr&uuml;fen &rarr; Pinsp/PEEP anpassen.</p>
+    </div>
+    <div class="lvl-card" onclick="go('cases')"><div class="lnum">6</div>
+      <div class="licon" style="background:var(--red-s);color:var(--red)"><svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></div>
+      <div class="badge red">Praxis</div><h4>10 Fallbeispiele</h4>
+      <p>ARDS, COPD, Pneumonie, Intoxikation, Lungen&ouml;dem, Weaning &mdash; mit L&ouml;sungen.</p>
+    </div>
+  </div>
+  <div class="controls"><button class="btn primary" onclick="go('grund');startTimer()">Kurs starten &#8594;</button></div>
+</div>
+
+<!-- ===== STUFE 1: GRUNDLAGE ===== -->
+<div class="view" id="v-grund">
+  <div class="hdr"><div class="badge green">Stufe 1 &mdash; Grundlage</div><h1>Warum beatmen wir?</h1><p>Das Ziel ist nicht Vollst&auml;ndigkeit &mdash; sondern das absolute Minimum, damit du im Dienst sofort handlungsf&auml;hig bist.</p></div>
+
+  <div class="card fadein"><h3><span class="ic red">!</span> Akute respiratorische Insuffizienz</h3>
+    <p><span class="hl">Definition:</span> Unf&auml;higkeit der Lunge, den Gasaustausch ausreichend sicherzustellen, sodass es zu einer <span class="hl">Hypox&auml;mie</span> (PaO&#8322; &lt; 60 mmHg) und/oder <span class="hl">Hyperkapnie</span> (PaCO&#8322; &gt; 45 mmHg) kommt.</p>
+    <div class="infobox danger" style="margin-top:10px"><div class="ib-title">Erkennen</div>
+      <p><span class="hl">Tachypnoe &gt; 25&ndash;30/min</span> &rarr; drohendes Versagen. <span class="hl">Bradypnoe &lt; 8&ndash;10/min</span> &rarr; Ersch&ouml;pfung oder zentrale Atemdepression. <span class="hl">Paradoxe Atemmuster</span> &rarr; Atempumpersch&ouml;pfung.<br>
+      BGA: SpO&#8322; &lt; 90%, PaO&#8322; &lt; 60 mmHg, PaCO&#8322; &gt; 45 mmHg.</p>
+    </div>
+  </div>
+
+  <div class="card fadein"><h3><span class="ic blue">I</span> Typ I vs Typ II</h3>
+    <div class="komp-grid">
+      <div class="komp-card" style="border-left:3px solid var(--blue)">
+        <div class="kh" style="color:var(--blue)">Typ I &mdash; Oxygenierungsst&ouml;rung</div>
+        <div class="kvals"><span class="hl">Lungenparenchymversagen</span><br>PaO&#8322; &lt; 60 mmHg bei Raumluft<br>PaCO&#8322; normal oder erniedrigt<br>Verlust an funktionellem Lungengewebe</div>
+        <div class="kex">ARDS, Pneumonie, Lungen&ouml;dem, Lungenembolie</div>
+      </div>
+      <div class="komp-card" style="border-left:3px solid var(--amber)">
+        <div class="kh" style="color:var(--amber)">Typ II &mdash; Ventilationsst&ouml;rung</div>
+        <div class="kvals"><span class="hl">Atempumpversagen</span><br>PaCO&#8322; &gt; 45 mmHg<br>Meist mit pH &lt; 7,35 (resp. Azidose)<br>Mangelnder Gasaustausch durch Antrieb/Mechanik</div>
+        <div class="kex">COPD, neuromuskul&auml;re Erkrankungen, ZNS-Depression</div>
+      </div>
+    </div>
+    <div class="komp-grid">
+      <div class="komp-card" style="border-left:3px solid var(--blue);background:var(--blue-s)">
+        <div class="kh" style="color:var(--blue)">Ziel bei Typ I</div>
+        <div class="kvals" style="font-size:14px;font-weight:600;color:var(--blue)">Oxygenierung</div>
+      </div>
+      <div class="komp-card" style="border-left:3px solid var(--amber);background:var(--amber-s)">
+        <div class="kh" style="color:var(--amber)">Ziel bei Typ II</div>
+        <div class="kvals" style="font-size:14px;font-weight:600;color:var(--amber)">CO&#8322;-Elimination</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card fadein"><h3><span class="ic green">O&#8322;</span> Sauerstofftransport (DO&#8322;)</h3>
+    <div class="formula"><div class="fx">DO&#8322; = 13,9 &times; Hb &times; SaO&#8322; &times; HZV</div><div class="fl">Sauerstoffangebot (Oxygen Delivery) &mdash; Menge O&#8322; pro Minute zu den Geweben</div></div>
+    <p>Es h&auml;ngt nur von <span class="hl">drei Dingen</span> ab:</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0;text-align:center">
+      <div class="infobox danger" style="margin:0"><div class="ib-title">Hb</div><p>Die Transporter, die O&#8322; tragen</p></div>
+      <div class="infobox" style="margin:0"><div class="ib-title">SaO&#8322;</div><p>Wie voll die Transporter beladen sind</p></div>
+      <div class="infobox warn" style="margin:0"><div class="ib-title">HZV</div><p>Wie viele Transporter pro Min ankommen</p></div>
+    </div>
+    <div class="infobox tip" style="margin-top:10px"><div class="ib-title">Therapie-Entscheidung</div>
+      <p><span class="hl">Hb niedrig</span> &rarr; Transfusion. <span class="hl">SaO&#8322; niedrig</span> &rarr; O&#8322; / Beatmung. <span class="hl">HZV niedrig</span> &rarr; Volumen / Katecholamine.<br>
+      H&auml;ufigster Fehler: &bdquo;Blutdruck normal = Perfusion okay&ldquo; &rarr; <span class="hl">FALSCH.</span></p>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn ghost" onclick="go('start')">&larr; &Uuml;bersicht</button>
+    <button class="btn primary" onclick="go('forms')">Weiter &rarr; Formen &amp; Parameter</button>
+  </div>
+</div>
+
+<!-- ===== STUFE 2: FORMEN & PARAMETER ===== -->
+<div class="view" id="v-forms">
+  <div class="hdr"><div class="badge amber">Stufe 2 &mdash; Advanced</div><h1>Beatmungsformen &amp; Parameter</h1><p>NIV vs. Invasiv. Die 4 Modi. Alle Parameter, die du kennen musst.</p></div>
+
+  <div class="card fadein"><h3><span class="ic blue">NIV</span> Nichtinvasive Beatmung</h3>
+    <p><span class="hl">Definition:</span> Assistierte Beatmung ohne invasiven Atemwegszugang &mdash; &uuml;ber eine dicht sitzende Maske mit positivem Atemwegsdruck.</p>
+    <div class="infobox tip" style="margin-top:8px"><div class="ib-title">Indikationen</div><p>COPD-Exazerbation mit Hyperkapnie, kardiales Lungen&ouml;dem, Obesitas-Hypoventilationssyndrom, Postextubation/Weaning.</p></div>
+    <div class="infobox danger"><div class="ib-title">Kontraindikationen</div><p>Komat&ouml;ser Zustand ohne Schutzreflexe, fehlende Spontanatmung, Atemwegsverlegung, GI-Blutung oder Ileus.</p></div>
+  </div>
+
+  <div class="card fadein"><h3><span class="ic red">ITN</span> Invasive Beatmung</h3>
+    <p><span class="hl">Definition:</span> &Uuml;ber Endotrachealtubus oder Trachealkn&uuml;le. Maschine &uuml;bernimmt ganz oder teilweise die Atemarbeit.</p>
+    <div class="infobox danger" style="margin-top:8px"><div class="ib-title">Indikationen</div><p>Schwere Hypox&auml;mie (pO&#8322; &lt; 60 trotz NIV/FiO&#8322; 100%), Hyperkapnie pH &lt; 7,20 trotz NIV, Bewusstseinsst&ouml;rung mit fehlenden Schutzreflexen.</p></div>
+    <div class="infobox"><div class="ib-title">Keine absoluten KI</div><p>Wenn Indikation klar &rarr; intubieren. Relativ: Patientenverf&uuml;gung, palliative Situation.</p></div>
+  </div>
+
+  <div class="card fadein"><h3><span class="ic amber">VCV vs PCV</span></h3>
+    <table class="ntable"><thead><tr><th>Merkmal</th><th>VCV</th><th>PCV</th></tr></thead><tbody>
+      <tr><td class="pn">Vorgabe</td><td class="pr">Tidalvolumen (Vt)</td><td class="pr">Inspirationsdruck (Pinsp)</td></tr>
+      <tr><td class="pn">Ergebnis</td><td class="pr">Druck variabel</td><td class="pr">Volumen variabel</td></tr>
+      <tr><td class="pn">Vorteil</td><td class="pm">Sicheres Volumen, gute CO&#8322;-Kontrolle</td><td class="pm">Druckbegrenzung, Schutz vor Barotrauma</td></tr>
+      <tr><td class="pn">Nachteil</td><td class="pm">Risiko hoher Spitzendr&uuml;cke</td><td class="pm">Volumen schwankt bei schlechter Compliance</td></tr>
+      <tr><td class="pn">Einsatz</td><td class="pm">OP, CO&#8322;-Elimination</td><td class="pm">ARDS, restriktive Erkrankungen</td></tr>
+    </tbody></table>
+  </div>
+
+  <div class="card fadein"><h3><span class="ic teal">4</span> Die 4 Beatmungsmodi</h3>
+    <div class="komp-grid">
+      <div class="komp-card"><div class="kh" style="color:var(--green)">CPAP</div><div class="kvals">Kontinuierlicher positiver Druck. Patient atmet spontan. Alveolen offen halten.</div><div class="kex">Kardiales Lungen&ouml;dem, leichte Hypoxie. &bdquo;Maske dr&uuml;ckt Luft rein, du atmest selbst.&ldquo;</div></div>
+      <div class="komp-card"><div class="kh" style="color:var(--blue)">ASB / PSV</div><div class="kvals">Unterst&uuml;tzte Spontanatmung. Ger&auml;t gibt Druckschub bei jedem Atemzug.</div><div class="kex">Weaning, Atemmuskelschw&auml;che. &bdquo;Du atmest, Maschine gibt dir Schub.&ldquo;</div></div>
+      <div class="komp-card"><div class="kh" style="color:var(--amber)">BiPAP</div><div class="kvals">Zwei Druckniveaus: IPAP (Einatmung) + EPAP (Offenhalten). Maschine &uuml;bernimmt fast alles.</div><div class="kex">COPD-Exazerbation, hypox. Insuffizienz. &bdquo;Zwei Dr&uuml;cke: einer rein, einer h&auml;lt offen.&ldquo;</div></div>
+      <div class="komp-card"><div class="kh" style="color:var(--red)">IPPV</div><div class="kvals">Maschine &uuml;bernimmt vollst&auml;ndig. Nur invasiv. Kein eigener Atemantrieb.</div><div class="kex">Reanimation, tiefe Sedierung. &bdquo;Maschine atmet f&uuml;r dich.&ldquo;</div></div>
+    </div>
+  </div>
+
+  <div class="card fadein"><h3><span class="ic purple">P</span> Beatmungsparameter</h3>
+    <table class="ntable"><thead><tr><th>Parameter</th><th>Was ist es?</th><th>Warum wichtig?</th></tr></thead><tbody>
+      <tr><td class="pn">Vt</td><td class="pr">Tidalvolumen (6&ndash;8 ml/kg ideal KG)</td><td class="pm">Zu niedrig &rarr; Hyperkapnie. Zu hoch &rarr; Barotrauma.</td></tr>
+      <tr><td class="pn">MV</td><td class="pr">Minutenvolumen = Vt &times; AF</td><td class="pm">Normal 5&ndash;8 l/min. Zentral f&uuml;r Ventilationsbeurteilung.</td></tr>
+      <tr><td class="pn">FiO&#8322;</td><td class="pr">O&#8322;-Konzentration (21&ndash;100%)</td><td class="pm">Je h&ouml;her, desto schwerer die Erkrankung.</td></tr>
+      <tr><td class="pn">Pinsp</td><td class="pr">Inspirationsdruck (&uuml;ber PEEP)</td><td class="pm">Steuert Vt bei PCV. Zu hoch &rarr; Barotrauma.</td></tr>
+      <tr><td class="pn">PEEP</td><td class="pr">Positiver endexspiratorischer Druck</td><td class="pm">H&auml;lt Alveolen offen. Zu hoch &rarr; HZV-Abfall.</td></tr>
+      <tr><td class="pn">Tinsp</td><td class="pr">Inspirationszeit (1,0&ndash;1,5s)</td><td class="pm">Zu kurz &rarr; Alveolenkollaps. Zu lang &rarr; &Uuml;berbl&auml;hung.</td></tr>
+      <tr><td class="pn">I:E</td><td class="pr">Inspirations-/Exspirationsverh&auml;ltnis</td><td class="pm">Normal 1:1,5&ndash;1:2. ARDS &rarr; 1:1. COPD &rarr; 1:3&ndash;1:4.</td></tr>
+      <tr><td class="pn">AF</td><td class="pr">Atemfrequenz</td><td class="pm">Bestimmt MV und Zyklusdauer (60s &divide; AF).</td></tr>
+    </tbody></table>
+    <div class="infobox teal" style="margin-top:8px"><div class="ib-title">Vt-Berechnung Beispiel</div>
+      <p>Patient 70 kg ideal KG: Vt<sub>min</sub> = 70 &times; 6 = <span class="hl">420 ml</span>. Vt<sub>max</sub> = 70 &times; 8 = <span class="hl">560 ml</span>.</p>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn ghost" onclick="go('grund')">&larr; Grundlagen</button>
+    <button class="btn primary" onclick="go('expert')">Weiter &rarr; Expert</button>
+  </div>
+</div>
+
+<!-- ===== STUFE 3: EXPERT ===== -->
+<div class="view" id="v-expert">
+  <div class="hdr"><div class="badge purple">Stufe 3 &mdash; Expert</div><h1>Sedierung &amp; Lungenmechanik</h1><p>RASS-Ziel, Sedierungs-Kombis, Compliance und Resistance verstehen.</p></div>
+
+  <div class="card fadein"><h3><span class="ic purple">R</span> RASS-Skala</h3>
+    <p>Richmond Agitation-Sedation Scale &mdash; das <span class="hl">Standardtool f&uuml;r Sedierungstiefe</span>.</p>
+    <div class="rass-box">
+      <div class="rass-num" id="rassNum" style="color:var(--green)">0</div>
+      <div class="rass-label" id="rassLabel" style="color:var(--green)">Wach und ruhig</div>
+      <input type="range" class="rass-slider" min="-5" max="4" value="0" step="1" oninput="moveRASS(this.value)">
+    </div>
+    <table class="ntable"><thead><tr><th>Score</th><th>Zustand</th></tr></thead><tbody>
+      <tr><td class="pn" style="color:var(--red)">+4</td><td class="pr">Aggressiv, gef&auml;hrlich</td></tr>
+      <tr><td class="pn" style="color:var(--red)">+3</td><td class="pr">Stark agitiert, zieht an Kathetern</td></tr>
+      <tr><td class="pn" style="color:var(--amber)">+2</td><td class="pr">Agitiert, h&auml;ufige ungerichtete Bewegungen</td></tr>
+      <tr><td class="pn" style="color:var(--amber)">+1</td><td class="pr">Unruhig, aber nicht aggressiv</td></tr>
+      <tr><td class="pn" style="color:var(--green)">0</td><td class="pr">Wach und ruhig &#10003;</td></tr>
+      <tr><td class="pn" style="color:var(--blue)">&minus;1</td><td class="pr">Schl&auml;frig, auf Ansprache &gt;10s wach</td></tr>
+      <tr><td class="pn" style="color:var(--blue)">&minus;2</td><td class="pr">Leicht sediert, kurz wach auf Ansprache</td></tr>
+      <tr><td class="pn" style="color:var(--purple)">&minus;3</td><td class="pr">M&auml;&szlig;ig sediert, Bewegung auf Ansprache</td></tr>
+      <tr><td class="pn" style="color:var(--text3)">&minus;4</td><td class="pr">Tief sediert, nur auf physische Reize</td></tr>
+      <tr><td class="pn" style="color:var(--text3)">&minus;5</td><td class="pr">Nicht weckbar</td></tr>
+    </tbody></table>
+  </div>
+
+  <div class="card fadein"><h3><span class="ic amber">&#9878;</span> Sedierungs-Kombis</h3>
+    <div class="komp-grid">
+      <div class="komp-card" style="border-left:3px solid var(--amber)">
+        <div class="kh" style="color:var(--amber)">Langzeit: Sufentanil + Dormicum</div>
+        <div class="kvals">Sufentanil: starkes Opioid, potente Analgesie.<br>Midazolam: Benzodiazepin, anxiolytisch, amnestisch.</div>
+        <div class="kex">Vorteile: tiefe Sedierung, kosteng&uuml;nstig. Nachteile: Akkumulation, verl&auml;ngertes Weaning, Delirrisiko.</div>
+      </div>
+      <div class="komp-card" style="border-left:3px solid var(--teal)">
+        <div class="kh" style="color:var(--teal)">Kurzzeit/Weaning: Ultiva + Propofol</div>
+        <div class="kvals">Remifentanil: ultrakurzwirksam, keine Akkumulation.<br>Propofol: hypnotisch, sehr gut steuerbar.</div>
+        <div class="kex">Vorteile: kurze Aufwachzeiten, ideal f&uuml;r Weaning. Nachteile: Hypotonie, Propofol-Infusionssyndrom.</div>
+      </div>
+    </div>
+    <div class="infobox warn"><div class="ib-title">Faustregel</div><p><span class="hl">So wenig wie m&ouml;glich, so viel wie n&ouml;tig.</span> Benzodiazepin-Kombi = stabil, aber verz&ouml;gertes Aufwachen. Propofol-Kombi = elegant steuerbar, aber h&auml;modynamisch heikel.</p></div>
+  </div>
+
+  <div class="card fadein"><h3><span class="ic teal">C/R</span> Compliance &amp; Resistance</h3>
+    <div class="komp-grid">
+      <div class="komp-card">
+        <div class="kh" style="color:var(--blue)">Compliance (Dehnbarkeit)</div>
+        <div class="kvals"><span class="hl">Hoch</span> = Lunge weich, f&uuml;llt sich leicht (Emphysem, COPD)<br><span class="hl">Niedrig</span> = Lunge steif, braucht hohen Druck (ARDS, Fibrose)</div>
+      </div>
+      <div class="komp-card">
+        <div class="kh" style="color:var(--amber)">Resistance (Widerstand)</div>
+        <div class="kvals"><span class="hl">Hoch</span> = erschwerte Atmung, erh&ouml;hter Druckbedarf (COPD, Asthma, Bronchospasmus)<br><span class="hl">Niedrig</span> = ungehinderter Fluss (normal, Tracheotomie)</div>
+      </div>
+    </div>
+    <div class="infobox"><div class="ib-title">Klinische Konsequenz</div><p>Compliance und Resistance bestimmen, welches Volumen bei welchem Druck in die Lunge kommt. Bei PCV: <span class="hl">schlechte Compliance = weniger Volumen bei gleichem Druck</span>. Darum Compliance immer im Blick behalten!</p></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn ghost" onclick="go('forms')">&larr; Formen &amp; Parameter</button>
+    <button class="btn primary" onclick="go('algo1')">Weiter &rarr; Algorithmus 1</button>
+  </div>
+</div>
+
+<!-- ===== STUFE 4: ALGORITHMUS 1 — 5-SCHRITTE ===== -->
+<div class="view" id="v-algo1">
+  <div class="hdr"><div class="badge teal">Stufe 4 &mdash; Algorithmus 1</div><h1>5-Schritte-Einstellung</h1><p>Interaktiver Algorithmus: Klick dich Schritt f&uuml;r Schritt durch die Ersteinstellung.</p></div>
+
+  <div class="card fadein"><h3><span class="ic teal">5</span> Beatmungseinstellung in 5 Schritten</h3>
+    <p>Immer in dieser Reihenfolge &mdash; klicke auf <strong>&ldquo;Starten&rdquo;</strong>, um den interaktiven Algorithmus zu beginnen.</p>
+  </div>
+
+  <div class="toggle">
+    <button class="btn on" onclick="load5S()">5-Schritte-Algorithmus starten</button>
+  </div>
+  <div class="algo-box" id="fiveBox"></div>
+  <div class="controls" style="margin-top:12px">
+    <button class="btn ghost" onclick="reset5S()">&#8635; Neustart</button>
+  </div>
+
+  <div class="controls" style="margin-top:24px">
+    <button class="btn ghost" onclick="go('expert')">&larr; Expert</button>
+    <button class="btn primary" onclick="go('algo2')">Weiter &rarr; Algorithmus 2</button>
+  </div>
+</div>
+
+<!-- ===== STUFE 5: ALGORITHMUS 2 — KORREKTUR ===== -->
+<div class="view" id="v-algo2">
+  <div class="hdr"><div class="badge blue">Stufe 5 &mdash; Algorithmus 2</div><h1>Korrektur nach aBGA</h1><p>15&ndash;30 Min nach Einstellung: aBGA machen, Vt pr&uuml;fen, systematisch korrigieren.</p></div>
+
+  <div class="card fadein"><h3><span class="ic red">&#8635;</span> Korrekturalgorithmus nach aBGA</h3>
+    <p>Einstellung abgeschlossen, aBGA gemacht &mdash; jetzt klickt euch durch:</p>
+  </div>
+
+  <div class="toggle">
+    <button class="btn on" id="tKorr" onclick="loadKorr()">Korrekturalgorithmus starten</button>
+  </div>
+  <div class="algo-box" id="korrBox"></div>
+  <div class="controls" style="margin-top:12px">
+    <button class="btn ghost" onclick="resetKorr()">&#8635; Neustart</button>
+  </div>
+
+  <div class="controls" style="margin-top:24px">
+    <button class="btn ghost" onclick="go('algo1')">&larr; Algorithmus 1</button>
+    <button class="btn primary" onclick="go('cases')">Weiter &rarr; Fallbeispiele</button>
+  </div>
+</div>
+
+<!-- ===== STUFE 6: FÄLLE ===== -->
+<div class="view" id="v-cases">
+  <div class="hdr"><div class="badge red">Alle Stufen</div><h1>Fallbeispiele</h1><p>10 Beatmungsf&auml;lle. Filtert nach Schwierigkeitsstufe.</p></div>
+  <div class="filters" id="cFilters"></div>
+  <div class="prog" id="cProg"></div>
+  <div id="caseBox"></div>
+</div>
+
+<!-- ===== DONE ===== -->
+<div class="view" id="v-done">
+  <div class="hdr"><div class="badge green">Geschafft!</div><h1>Kurs abgeschlossen</h1></div>
+  <div id="finalScore"></div>
+</div>
+
+</div>
+
+<script>
+// ========== NAV ==========
+const views=['start','grund','forms','expert','algo1','algo2','cases','done'];
+const viewLabels=['Start','Grundlagen','Formen','Expert','Algorithmus 1','Algorithmus 2','F\u00e4lle','Fertig'];
+const navSVGs=[
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 01-9 9"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.78 7.78 5.5 5.5 0 017.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>'
+];
+function buildNav(){
+  const dt=document.getElementById('dtabs'),bn=document.getElementById('bnav');
+  [0,1,2,3,4,5,6].forEach(idx=>{
+    const v=views[idx];
+    const t=document.createElement('button');t.className='dtab'+(idx===0?' active':'');t.textContent=viewLabels[idx];t.onclick=()=>go(v);dt.appendChild(t);
+    const b=document.createElement('button');b.className='bnav-item'+(idx===0?' active':'');b.innerHTML=navSVGs[idx]+'<span>'+viewLabels[idx]+'</span>';b.onclick=()=>go(v);bn.appendChild(b);
+  });
+}
+buildNav();
+function go(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const el=document.getElementById('v-'+id);if(el)el.classList.add('active');
+  const idx=views.indexOf(id);
+  document.querySelectorAll('.dtab').forEach((t,i)=>{t.classList.toggle('active',i===Math.min(idx,6))});
+  document.querySelectorAll('.bnav-item').forEach((t,i)=>{t.classList.toggle('active',i===Math.min(idx,6))});
+  window.scrollTo(0,0);
+  if(id==='algo1')load5S();
+  if(id==='algo2')loadKorr();
+  if(id==='cases')initCases();
+}
+
+// ========== TIMER ==========
+let timerInt,timerSec=5400;
+function startTimer(){if(timerInt)return;timerInt=setInterval(()=>{timerSec--;if(timerSec<0){clearInterval(timerInt);return}const m=Math.floor(timerSec/60),s=timerSec%60;document.getElementById('timerD').textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;if(timerSec<=300)document.getElementById('timerBox').classList.add('warn')},1000)}
+
+// ========== RASS ==========
+const rassData={'-5':'Nicht weckbar','-4':'Tief sediert','-3':'M\u00e4\u00dfig sediert','-2':'Leicht sediert','-1':'Schl\u00e4frig','0':'Wach und ruhig','1':'Unruhig','2':'Agitiert','3':'Stark agitiert','4':'Aggressiv'};
+function moveRASS(v){
+  v=parseInt(v);
+  document.getElementById('rassNum').textContent=(v>=0?'+':'')+v;
+  document.getElementById('rassLabel').textContent=rassData[v]||'';
+  let c;
+  if(v>=3)c='var(--red)';else if(v>=1)c='var(--amber)';else if(v===0)c='var(--green)';else if(v>=-2)c='var(--blue)';else c='var(--text3)';
+  document.getElementById('rassNum').style.color=c;
+  document.getElementById('rassLabel').style.color=c;
+}
+
+// ========== 5-SCHRITTE-ALGORITHMUS (interactive) ==========
+let fsState=[];
+function load5S(){fsState=[];render5S()}
+function reset5S(){fsState=[];render5S()}
+function fsAns(choice){fsState.push(choice);render5S()}
+function render5S(){
+  const box=document.getElementById('fiveBox');box.innerHTML='';
+  const steps=[];
+
+  // Step 0: Start node
+  steps.push({type:'node',cls:'teal',lb:'Beatmungseinstellung starten',vl:'Patient intubiert / NIV angelegt',sb:'Systematisch in 5 Schritten einstellen'});
+
+  // Step 1: Question - Pathophysiologie
+  steps.push({type:'q2',lb:'Schritt 1 \u2014 Pathophysiologie',vl:'Was liegt vor?',sb:'Bestimme die Ursache der respiratorischen Insuffizienz.',btns:[{label:'Oxygenierungsst\u00f6rung (Typ I)',cls:'low',val:'oxy'},{label:'Ventilationsst\u00f6rung (Typ II)',cls:'high',val:'vent'}]});
+
+  if(fsState.length>=1){
+    const path=fsState[0];
+    const isOxy=path==='oxy';
+
+    // Result of Step 1
+    steps.push({type:'node',cls:isOxy?'red':'amber',
+      lb:isOxy?'Typ I \u2014 Oxygenierungsst\u00f6rung':'Typ II \u2014 Ventilationsst\u00f6rung',
+      vl:isOxy?'Lungenparenchymversagen \u2192 pO\u2082 \u2193':'Atempumpversagen \u2192 pCO\u2082 \u2191',
+      sb:isOxy?'z.B. Pneumonie, ARDS, Lungen\u00f6dem':'z.B. COPD, Opioid-Intox, neuromuskulär'});
+
+    // Step 2: Vt
+    steps.push({type:'node',cls:'teal',
+      lb:'Schritt 2 \u2014 Tidalvolumen (Vt)',
+      vl:'6\u20138 ml/kg \u00d7 ideales K\u00f6rpergewicht',
+      sb:isOxy?'Bei ARDS: 6 ml/kg (lungenprotektiv!)':'Standard: 6\u20138 ml/kg'});
+
+    // Step 3: FiO2 - question
+    steps.push({type:'node',cls:isOxy?'red':'amber',
+      lb:'Schritt 3 \u2014 FiO\u2082',
+      vl:isOxy?'Start mit FiO\u2082 80%':'Start mit FiO\u2082 60%',
+      sb:isOxy?'Oxygenierungsst\u00f6rung = h\u00f6herer O\u2082-Bedarf':'Ventilationsst\u00f6rung = moderater O\u2082-Bedarf'});
+
+    // Step 4: PEEP
+    steps.push({type:'node',cls:isOxy?'red':'amber',
+      lb:'Schritt 4 \u2014 PEEP',
+      vl:isOxy?'PEEP 6\u20138 cmH\u2082O (bei ARDS: 10\u201316)':'PEEP 8\u201310 cmH\u2082O',
+      sb:isOxy?'Alveolen offen halten + Rekrutierung':'Intrinsischen PEEP beachten (Air-Trapping bei COPD)'});
+
+    // Step 5: Pinsp, AF, I:E
+    steps.push({type:'node',cls:'teal',
+      lb:'Schritt 5 \u2014 Pinsp, AF, I:E',
+      vl:'Pinsp = PEEP + 10 (Daumenregel)',
+      sb:isOxy?'AF 12\u201316/min. I:E 1:1 bis 1:1,5 (mehr Zeit f\u00fcr Oxygenierung)':'AF 12\u201316/min. I:E 1:2 bis 1:3 (mehr Zeit f\u00fcr Exspiration!)'});
+
+    // Final node
+    steps.push({type:'node',cls:'ok',
+      lb:'Einstellung komplett!',
+      vl:'15\u201330 Minuten abwarten \u2192 aBGA machen',
+      sb:'Dann weiter mit Algorithmus 2: Korrekturalgorithmus'});
+  }
+
+  const vis=fsState.length===0?1:99;
+  steps.forEach((st,i)=>{
+    if(i>0){const ar=document.createElement('div');ar.className='algo-arrow'+(i<=vis?' show':'');ar.textContent='\u2193';box.appendChild(ar)}
+    const el=document.createElement('div');el.className='algo-step'+(i<=vis?' show':'');
+    if(st.type==='node'){
+      el.innerHTML='<div class="algo-node '+st.cls+'"><div class="lb">'+st.lb+'</div><div class="vl">'+st.vl+'</div><div class="sb">'+st.sb+'</div></div>';
+    } else if(st.type==='q2'){
+      const canClick=i<=vis&&fsState.length===0;
+      let bh='';st.btns.forEach(b=>{bh+='<button class="abtn '+b.cls+'" '+(canClick?'':'disabled')+' onclick="fsAns(\''+b.val+'\')">'+b.label+'</button>'});
+      el.innerHTML='<div class="algo-node"><div class="lb">'+st.lb+'</div><div class="vl">'+st.vl+'</div><div class="sb">'+st.sb+'</div></div><div style="height:6px"></div><div class="algo-btns">'+bh+'</div>';
+    }
+    box.appendChild(el);
+  });
+}
+
+// ========== KORREKTUR-ALGORITHMUS ==========
+let korrState=[];
+function loadKorr(){korrState=[];renderKorr()}
+function resetKorr(){korrState=[];renderKorr()}
+function korrAns(choice){korrState.push(choice);renderKorr()}
+function renderKorr(){
+  const box=document.getElementById('korrBox');box.innerHTML='';
+  const steps=[];
+  // Step 0: Start
+  steps.push({type:'node',cls:'teal',lb:'Beatmungsalgorithmus abgeschlossen',vl:'aBGA machen & Einstellungen pr\u00fcfen',sb:'30 Minuten nach Einstellung'});
+  // Step 1: Titalvolumen?
+  steps.push({type:'q3',lb:'Titalvolumen-Beurteilung',vl:'Wie ist das Tidalvolumen?',sb:'Ziel-Vt vs. aktuelles Vt vergleichen',btns:[{label:'Vt zu niedrig',cls:'low',val:'low'},{label:'Vt optimal',cls:'ok',val:'ok'},{label:'Vt zu hoch',cls:'high',val:'high'}]});
+
+  if(korrState.length>=1){
+    const first=korrState[0];
+    if(first==='low'){
+      steps.push({type:'node',cls:'red',lb:'Vt zu niedrig',vl:'Checkliste Korrektur nutzen!',sb:'Was ist mein Vt-Ziel? Aktuelles Vt? Differenz? Compliance?'});
+      steps.push({type:'node',cls:'amber',lb:'Korrektur',vl:'Pinsp erh\u00f6hen',sb:'Compliance in ml = 1 Punkt Pinsp. Dann PEEP um 1\u20132 Punkte erh\u00f6hen.'});
+      steps.push({type:'node',cls:'ok',lb:'N\u00e4chster Schritt',vl:'Beatmung 30\u201360 Min fortf\u00fchren',sb:'Dann erneut aBGA und pr\u00fcfen.'});
+    } else if(first==='ok'){
+      steps.push({type:'node',cls:'ok',lb:'Vt optimal',vl:'Korrigiere Hyperoxie',sb:'FiO\u2082 um 5\u201310% reduzieren'});
+      steps.push({type:'node',cls:'ok',lb:'N\u00e4chster Schritt',vl:'Beatmung 30 Min fortf\u00fchren',sb:'Dann erneut aBGA und Einstellung \u00fcberpr\u00fcfen.'});
+    } else if(first==='high'){
+      steps.push({type:'node',cls:'amber',lb:'Vt zu hoch',vl:'Checkliste Korrektur nutzen!',sb:'Was ist mein Vt-Ziel? Aktuelles Vt? Differenz? Compliance?'});
+      steps.push({type:'node',cls:'blue',lb:'Korrektur',vl:'Pinsp reduzieren',sb:'Compliance in ml = 1 Punkt Pinsp. Dann PEEP um 1\u20132 Punkte reduzieren.'});
+      steps.push({type:'node',cls:'ok',lb:'N\u00e4chster Schritt',vl:'Beatmung 30\u201360 Min fortf\u00fchren',sb:'Dann erneut aBGA und pr\u00fcfen.'});
+    }
+  }
+
+  const vis=korrState.length===0?1:99;
+  steps.forEach((st,i)=>{
+    if(i>0){const ar=document.createElement('div');ar.className='algo-arrow'+(i<=vis?' show':'');ar.textContent='\u2193';box.appendChild(ar)}
+    const el=document.createElement('div');el.className='algo-step'+(i<=vis?' show':'');
+    if(st.type==='node'){
+      el.innerHTML='<div class="algo-node '+st.cls+'"><div class="lb">'+st.lb+'</div><div class="vl">'+st.vl+'</div><div class="sb">'+st.sb+'</div></div>';
+    } else if(st.type==='q3'){
+      const canClick=i<=vis&&korrState.length===0;
+      let bh='';st.btns.forEach(b=>{bh+='<button class="abtn '+b.cls+'" '+(canClick?'':'disabled')+' onclick="korrAns(\''+b.val+'\')">'+b.label+'</button>'});
+      el.innerHTML='<div class="algo-node"><div class="lb">'+st.lb+'</div><div class="vl">'+st.vl+'</div><div class="sb">'+st.sb+'</div></div><div style="height:6px"></div><div class="algo-btns">'+bh+'</div>';
+    }
+    box.appendChild(el);
+  });
+}
+
+// ========== CASES ==========
+const C=[
+{n:'Fall 1 \u2014 ARDS bei Pneumonie',a:'58j, M',lv:'grund',sc:'Schwere ambulant erworbene Pneumonie. Seit 2 Tagen zunehmende Dyspnoe. Intubiert im RTW.',kl:['Bilaterale Infiltrate im R\u00f6ntgen','Schwere Hypox\u00e4mie trotz O\u2082','Horovitz-Index < 100','Tachykardie'],v:{pH:7.28,pCO2:48,SpO2:82,pO2:55,BE:-4,Lak:3.2,FiO2:'80%'},bp:{modus:'BiPAP',vt:420,peep:12,pinsp:22,fio2:80,af:16,ie:'1:1'},q:[{q:'Welcher Typ liegt vor?',o:['Typ I \u2014 Oxygenierungsst\u00f6rung (Lungenparenchymversagen)','Typ II \u2014 Ventilationsst\u00f6rung','Gemischt','Keiner'],c:0,f:'Bilaterale Infiltrate + schwere Hypox\u00e4mie + Horovitz < 100 = schweres ARDS. Oxygenierungsst\u00f6rung!'},{q:'PEEP-Strategie bei ARDS?',o:['Hoher PEEP (10\u201316) + niedriges Vt (6 ml/kg) + I:E 1:1','PEEP 5 + hohes Vt','Kein PEEP','PEEP 20'],c:0,f:'Lungenprotektive Beatmung: PEEP hoch, Vt 6 ml/kg, Plateaudruck < 30 cmH\u2082O.'}],s:{ls:'Schwere Dyspnoe',lb:'Bilaterale Infiltrate, Horovitz < 100',dx:'Schweres ARDS bei Pneumonie',tx:'Lungenprotektive Beatmung: Vt 6 ml/kg, PEEP 12\u201316, FiO\u2082 nach Bedarf, Bauchlage, ggf. Relaxierung.'}},
+{n:'Fall 2 \u2014 COPD-Exazerbation',a:'72j, M',lv:'grund',sc:'Bekannte COPD GOLD IV. Seit 3 Tagen zunehmende Dyspnoe + eitriger Auswurf. NIV gestartet.',kl:['Ausgepr\u00e4gte Spastik, Giemen','Atemhilfsmuskulatur','Lippenzyanose','Verwirrt'],v:{pH:7.22,pCO2:85,SpO2:86,pO2:52,BE:8,Lak:1.8,FiO2:'40%'},bp:{modus:'BiPAP/NIV',vt:500,peep:6,pinsp:16,fio2:40,af:14,ie:'1:2,5'},q:[{q:'Typ der Insuffizienz?',o:['Typ II \u2014 Ventilationsst\u00f6rung (Hyperkapnie)','Typ I \u2014 Oxygenierungsst\u00f6rung','Keiner','Metabolische Ursache'],c:0,f:'pCO\u2082 85 = massive Hyperkapnie. COPD = Atempumpversagen. Typ II!'},{q:'Warum BiPAP statt CPAP?',o:['CPAP hilft nur bei Oxygenierung \u2014 hier muss CO\u2082 eliminiert werden','CPAP ist st\u00e4rker','BiPAP ist billiger','Kein Unterschied'],c:0,f:'BiPAP hat IPAP + EPAP \u2192 unterst\u00fctzt aktiv die Ventilation \u2192 CO\u2082-Elimination. CPAP hat nur einen Druck.'}],s:{ls:'Dyspnoe + eitriger Auswurf',lb:'Spastik, Hyperkapnie pH 7,22',dx:'Akute COPD-Exazerbation mit resp. Azidose',tx:'NIV (BiPAP), Steroide, Inhalation, AB. Bei Verschlechterung: Intubation. PEEP nicht zu hoch (Air-Trapping!).'}},
+{n:'Fall 3 \u2014 Kardiales Lungen\u00f6dem',a:'68j, W',lv:'basic',sc:'Akute Dekompensation bei HFrEF. Schwere Orthopnoe seit 4h.',kl:['Feuchte RGs bds basal','Periphere \u00d6deme','Schaumiger Auswurf','RR 180/100, HF 110'],v:{pH:7.35,pCO2:32,SpO2:84,pO2:52,BE:-3,Lak:2.8,FiO2:'Raumluft'},bp:{modus:'CPAP/NIV',vt:0,peep:8,pinsp:0,fio2:60,af:'spontan',ie:'spontan'},q:[{q:'Welche Beatmung zuerst?',o:['CPAP \u2014 positiver Druck dr\u00fcckt Fl\u00fcssigkeit zur\u00fcck + verbessert Oxygenierung','Sofort Intubation','Nur O\u2082-Brille','BiPAP'],c:0,f:'CPAP ist First-Line beim kardialen Lungen\u00f6dem! Positiver Druck reduziert Vorlast + Nachlast und verbessert Oxygenierung.'},{q:'Medikament\u00f6se Therapie parallel?',o:['Lasix iv + Nitro bei RR > 110 + Morphin bei starker Angst','Nur AB','Volumen','Adrenalin'],c:0,f:'Lasix 40\u201380 mg iv, Nitro sublingual/iv (bei RR > 110), Morphin 2\u20134 mg bei Angst. O\u2082-Monitoring!'}],s:{ls:'Orthopnoe',lb:'Feuchte RGs, Lungen\u00f6dem',dx:'Akut dekompensierte Herzinsuffizienz mit Lungen\u00f6dem',tx:'CPAP, Lasix iv, Nitro, ggf. Morphin. Bei Verschlechterung: BiPAP oder Intubation.'}},
+{n:'Fall 4 \u2014 Opioid-Intoxikation',a:'34j, M',lv:'basic',sc:'Aufgefunden mit Spritzbesteck. Miosis, Bradypnoe 4/min.',kl:['Miosis (stecknadelkopf)','Bradypnoe 4/min','Somnolent bis komat\u00f6s','Zyanose'],v:{pH:7.12,pCO2:98,SpO2:78,pO2:42,BE:1,Lak:2.0,FiO2:'Raumluft'},bp:{modus:'IPPV nach Intubation',vt:500,peep:5,pinsp:18,fio2:100,af:14,ie:'1:1,5'},q:[{q:'Warum ist hier NIV NICHT m\u00f6glich?',o:['Komat\u00f6s + fehlende Schutzreflexe + Apnoe','NIV ist immer m\u00f6glich','Patient muss erst R\u00f6ntgen','Abwarten'],c:0,f:'Koma + Apnoe + fehlende Schutzreflexe = NIV absolut kontraindiziert! Sofort intubieren.'},{q:'Erste Ma\u00dfnahme VOR Intubation?',o:['Beutel-Masken-Beatmung + Naloxon 0,4 mg iv','Intubation ohne Pr\u00e4oxygenierung','CT','Abwarten ob Naloxon reicht'],c:0,f:'Beutel-Masken-Beatmung zur \u00dcberbr\u00fcckung! Naloxon kann Intubation ersparen, aber Atemwegssicherung hat Priorit\u00e4t.'}],s:{ls:'Bewusstlosigkeit + Bradypnoe',lb:'Miosis, pCO\u2082 98, Zyanose',dx:'Resp. Insuffizienz Typ II bei Opioid-Intoxikation',tx:'Beutel-Masken, Naloxon 0,4 mg iv, ggf. Intubation + IPPV. ITS. Giftnotzentrale.'}},
+{n:'Fall 5 \u2014 Post-ROSC',a:'55j, M',lv:'advanced',sc:'Reanimation 25 Min. ROSC erreicht. Intubiert w\u00e4hrend CPR.',kl:['Intubiert, ROSC','Pupillen mittelweit, lichtstarr','RR 85/50 mit Noradrenalin','K\u00fchlung eingeleitet'],v:{pH:7.05,pCO2:52,SpO2:94,pO2:180,BE:-18,Lak:14,FiO2:'100%'},bp:{modus:'IPPV',vt:450,peep:8,pinsp:20,fio2:100,af:16,ie:'1:1,5'},q:[{q:'Was f\u00e4llt bei pO\u2082 und FiO\u2082 auf?',o:['Hyperoxie! pO\u2082 180 bei FiO\u2082 100% \u2014 FiO\u2082 reduzieren!','Normal','Hypoxie','Irrelevant'],c:0,f:'Post-ROSC Hyperoxie ist sch\u00e4dlich! FiO\u2082 sofort reduzieren, Ziel SpO\u2082 94\u201396%. Hyperoxie \u2192 mehr Reperfusionsschaden.'},{q:'Ziel-pCO\u2082 Post-ROSC?',o:['Normokapnie 35\u201345 mmHg \u2014 weder Hypo- noch Hyperventilation','pCO\u2082 so niedrig wie m\u00f6glich','pCO\u2082 egal','pCO\u2082 > 60'],c:0,f:'Strenge Normokapnie! Hypokapnie \u2192 zerebrale Vasokonstriktion. Hyperkapnie \u2192 Hirn\u00f6dem. AF anpassen!'}],s:{ls:'Post-Reanimation',lb:'ROSC, schwere Azidose, Laktat 14',dx:'Post-ROSC mit schwerer met. Azidose + Hyperoxie',tx:'FiO\u2082 reduzieren (Ziel SpO\u2082 94\u201396%). Normokapnie. Lungenprotektiv. K\u00fchlung. H\u00e4modynamik stabilisieren.'}},
+{n:'Fall 6 \u2014 Adipositas + Hypoventilation',a:'48j, W',lv:'advanced',sc:'BMI 52. Geplante OP. N\u00e4chtliche Hypox\u00e4mien. Jetzt akute Verschlechterung.',kl:['Massive Adipositas','Somnolent','Periphere \u00d6deme','Zyanose'],v:{pH:7.28,pCO2:72,SpO2:80,pO2:48,BE:6,Lak:1.2,FiO2:'Raumluft'},bp:{modus:'BiPAP/NIV',vt:0,peep:10,pinsp:20,fio2:50,af:'spontan+backup',ie:'spontan'},q:[{q:'Warum ist der BE positiv trotz Azidose?',o:['Chronische Kompensation \u2014 Nieren haben HCO\u2083 angereichert','Messfehler','Metabolische Alkalose','Irrelevant'],c:0,f:'BE +6 = die Nieren kompensieren seit l\u00e4ngerem. Chronische Hyperkapnie mit akuter Verschlechterung!'},{q:'Besonderheit bei Adipositas + Beatmung?',o:['H\u00f6herer PEEP n\u00f6tig (10\u201314) wg. Zwerchfell-Hochstand + Atelektasen','PEEP 0','Nur O\u2082-Brille','Kein Unterschied'],c:0,f:'Abdomineller Druck dr\u00fcckt Zwerchfell hoch \u2192 Atelektasen. H\u00f6herer PEEP + Oberk\u00f6rperhochlage 30\u00b0!'}],s:{ls:'Somnolenz + Hypox\u00e4mie',lb:'BMI 52, Hyperkapnie, chronisch kompensiert',dx:'Akut auf chronische Hypoventilation bei OHS',tx:'BiPAP mit hohem PEEP. Oberk\u00f6rperhochlage. Gewichtsadaptierte Vt-Berechnung (ideal KG, NICHT real!).'}},
+{n:'Fall 7 \u2014 Asthma-Anfall',a:'25j, W',lv:'basic',sc:'Schwerer Asthmaanfall. Salbutamol ohne Effekt. Zunehmend ersch\u00f6pft.',kl:['Silent Chest','Tachykardie 140','Tachypnoe 35','Erschöpft, kann nicht sprechen'],v:{pH:7.18,pCO2:68,SpO2:88,pO2:58,BE:-2,Lak:3.5,FiO2:'15L Maske'},bp:{modus:'NIV \u2192 ggf. IPPV',vt:0,peep:5,pinsp:15,fio2:80,af:'spontan',ie:'1:3'},q:[{q:'Warum ist "Silent Chest" so gef\u00e4hrlich?',o:['Kein Luftfluss mehr h\u00f6rbar = totale Obstruktion = kurz vor Atemstillstand','Normal bei Asthma','Zeichen der Besserung','Irrelevant'],c:0,f:'Silent Chest = kein Giemen mehr, weil KEIN Luftfluss. Lebensbedrohlich!'},{q:'Besonderheit I:E bei Asthma?',o:['Verl\u00e4ngerte Exspiration (1:3 bis 1:4) wg. Air-Trapping','1:1','I:E egal','1:0,5'],c:0,f:'Hohe Resistance \u2192 Luft braucht l\u00e4nger zum Ausstr\u00f6men. I:E 1:3\u20131:4. AF niedrig halten (10\u201312).'}],s:{ls:'Schwerer Asthmaanfall',lb:'Silent Chest, Ersch\u00f6pfung',dx:'Status asthmaticus mit resp. Azidose',tx:'Salbutamol + Ipratropium nonstop. MgSO\u2084 2g iv. Bei Verschlechterung: Intubation mit Ketamin. I:E 1:3\u20131:4!'}},
+{n:'Fall 8 \u2014 Weaning-Versagen',a:'65j, M',lv:'advanced',sc:'Tag 7 ITS. ARDS gebessert. Spontanatmungsversuch (SBT) gescheitert nach 15 Min.',kl:['Tachypnoe auf ASB','Tachykardie','Schwitzen','Rapid Shallow Breathing Index > 105'],v:{pH:7.32,pCO2:55,SpO2:92,pO2:68,BE:1,Lak:1.0,FiO2:'40%'},bp:{modus:'ASB/PSV',vt:350,peep:8,pinsp:12,fio2:40,af:28,ie:'spontan'},q:[{q:'Warum ist der RSBI (Rapid Shallow Breathing Index) so wichtig?',o:['RSBI > 105 = Weaning wird wahrscheinlich scheitern (AF/Vt in L)','Nur ein Wert unter vielen','Irrelevant','RSBI sollte hoch sein'],c:0,f:'RSBI = AF / Vt(L). > 105 = hohe AF + niedriges Vt = flache schnelle Atmung = Ersch\u00f6pfung \u2192 Weaning abbrechen.'},{q:'N\u00e4chster Schritt?',o:['Zur\u00fcck auf Beatmung, Ursache suchen (Schw\u00e4che, Delir, Volumen), morgen neuer Versuch','Extubieren trotzdem','IPPV dauerhaft','Tracheotomie sofort'],c:0,f:'SBT gescheitert \u2192 zur\u00fcck auf Beatmung, 24h Erholung. Ursachen: CIP/CIM, Delir, \u00dcberlast, Herzinsuffizienz.'}],s:{ls:'SBT gescheitert',lb:'RSBI > 105, Tachypnoe',dx:'Weaning-Versagen',tx:'Zur\u00fcck auf Beatmung. Ursache kl\u00e4ren. Morgen erneuter SBT. Ab Tag 7 Weaning-Versagen: Tracheotomie erw\u00e4gen.'}},
+{n:'Fall 9 \u2014 Polytrauma',a:'32j, M',lv:'expert',sc:'Motorradunfall. Rippenserienfraktur links + Pneumothorax + Milzruptur. Intubiert am UO.',kl:['Rippenserienfraktur links','Pneumothorax drainiert','H\u00e4modynamisch instabil','Massivtransfusion l\u00e4uft'],v:{pH:7.15,pCO2:38,SpO2:90,pO2:62,BE:-14,Lak:8.5,FiO2:'100%'},bp:{modus:'IPPV',vt:420,peep:8,pinsp:22,fio2:100,af:16,ie:'1:1,5'},q:[{q:'Warum trotz normalem pCO\u2082 schwere Azidose?',o:['Metabolische Azidose (BE -14, Laktat 8,5) \u2014 Schock + Gewebehypoperfusion','Respiratorische Azidose','Keine Azidose','Alkalose'],c:0,f:'pCO\u2082 38 = normal \u2192 NICHT respiratorisch. BE -14 + Laktat 8,5 = schwere met. Laktatazidose bei Schock!'},{q:'PEEP-Besonderheit bei Pneumothorax?',o:['Vorsichtig! PEEP kann Leck vergr\u00f6\u00dfern \u2014 Drainage muss liegen und funktionieren','PEEP maximal','PEEP egal','PEEP 0'],c:0,f:'PEEP bei drainiertem Pneumothorax OK, aber vorsichtig. PEEP 5\u20138, Drainage-Kontrolle! Bei undurchl\u00e4ssiger Drainage: Spannungspneumothorax-Gefahr.'}],s:{ls:'Polytrauma',lb:'Rippenserienfraktur, Pneumothorax, Laktat 8,5',dx:'H\u00e4morrhagischer Schock + met. Laktatazidose bei Polytrauma',tx:'Massivtransfusion, Damage Control Surgery. Lungenprotektiv beatmen. PEEP vorsichtig, Drainage kontrollieren.'}},
+{n:'Fall 10 \u2014 Guillain-Barr\u00e9',a:'42j, W',lv:'expert',sc:'Aufsteigende Parese seit 5 Tagen. Jetzt Schluckst\u00f6rung + Vitalkapazit\u00e4t < 20 ml/kg.',kl:['Aufsteigende Parese','Areflexie','Schluckst\u00f6rung','Vitalkapazit\u00e4t 15 ml/kg (< 20)'],v:{pH:7.35,pCO2:48,SpO2:94,pO2:72,BE:0,Lak:0.8,FiO2:'Raumluft'},bp:{modus:'IPPV nach Intubation',vt:480,peep:5,pinsp:16,fio2:30,af:14,ie:'1:1,5'},q:[{q:'Warum intubieren, obwohl BGA fast normal?',o:['Vitalkapazit\u00e4t < 20 ml/kg = drohender Atemstillstand \u2014 nicht auf BGA-Verschlechterung warten!','BGA ist normal, abwarten','NIV reicht','Nur wenn pCO\u2082 > 60'],c:0,f:'Bei GBS: Vitalkapazit\u00e4t < 20, Schluckst\u00f6rung, schnelle Progression = elektiv intubieren BEVOR BGA schlecht wird!'},{q:'Besonderheit bei neuromuskulärer Beatmung?',o:['Compliance normal! Problem ist die Atempumpe, nicht die Lunge \u2014 normale Beatmungsparameter','Hoher PEEP wg. Atelektasen','Extrem hoher Pinsp','Spontanatmung erzwingen'],c:0,f:'Lunge ist gesund! Compliance + Resistance normal. Standardparameter. Fokus auf Weaning-Readiness (r\u00fcckkehrende Kraft).'}],s:{ls:'Aufsteigende Parese + Schluckst\u00f6rung',lb:'VK < 20 ml/kg, Areflexie',dx:'Guillain-Barr\u00e9-Syndrom mit drohendem Atempumpversagen',tx:'Elective Intubation. Standardbeatmung. Immunglobuline/Plasmapherese. T\u00e4glicher Weaning-Versuch ab Kraftr\u00fcckkehr.'}}
+];
+
+const NR={pH:[7.35,7.45],pCO2:[35,45],SpO2:[92,999],pO2:[70,999],BE:[-2,2],Lak:[0,2]};
+const VN={pCO2:'pCO\u2082',pO2:'pO\u2082',SpO2:'SpO\u2082',Lak:'Laktat',FiO2:'FiO\u2082'};
+let cIdx=0,qIdx=0,cScore={ok:0,total:0},cAnswered=false,activeFilter='alle',filteredCases=[];
+
+function initCases(){renderFilters();filterCases();if(cIdx>=filteredCases.length)cIdx=0;renderProg();renderCase()}
+function renderFilters(){
+  const el=document.getElementById('cFilters');el.innerHTML='';
+  ['alle','grund','basic','advanced','expert'].forEach(f=>{
+    const b=document.createElement('button');b.className='fbtn'+(activeFilter===f?' on':'');
+    b.textContent=f==='alle'?'Alle (10)':f==='grund'?'Grundlage':f.charAt(0).toUpperCase()+f.slice(1);
+    b.onclick=()=>{activeFilter=f;cIdx=0;qIdx=0;initCases()};el.appendChild(b);
+  });
+}
+function filterCases(){filteredCases=activeFilter==='alle'?C:C.filter(c=>c.lv===activeFilter)}
+function renderProg(){const el=document.getElementById('cProg');el.innerHTML='';filteredCases.forEach((_,i)=>{const p=document.createElement('div');p.className='pip'+(i<cIdx?' done':'')+(i===cIdx?' now':'');el.appendChild(p)})}
+function renderCase(){
+  if(cIdx>=filteredCases.length){showFinal();return}
+  const c=filteredCases[cIdx];cAnswered=false;const box=document.getElementById('caseBox');
+  let vh='';
+  for(const[k,val]of Object.entries(c.v)){
+    const nr=NR[k];const num=typeof val==='number'?val:null;
+    let bad=false;if(num!==null&&nr){bad=num<nr[0]||num>nr[1]}if(typeof val==='string'&&k!=='FiO2')bad=true;
+    const display=VN[k]||k;
+    vh+=`<div class="vital ${bad?'bad':(num?'good':'')}"><div class="vl">${display}</div><div class="vv">${typeof val==='number'?(k==='pH'?val.toFixed(2):val):val}</div><div class="vn">${nr?nr[0]+'-'+nr[1]:''}</div></div>`;
+  }
+  let bph='';if(c.bp){const bp=c.bp;bph=`<div class="vent-params"><div class="vp"><div class="vpl">Modus</div><div class="vpv" style="font-size:13px">${bp.modus}</div></div><div class="vp"><div class="vpl">Vt</div><div class="vpv">${bp.vt||'\u2014'}</div></div><div class="vp"><div class="vpl">PEEP</div><div class="vpv">${bp.peep}</div></div><div class="vp"><div class="vpl">Pinsp</div><div class="vpv">${bp.pinsp||'\u2014'}</div></div><div class="vp"><div class="vpl">FiO\u2082</div><div class="vpv">${bp.fio2}%</div></div><div class="vp"><div class="vpl">AF</div><div class="vpv">${bp.af}</div></div></div>`}
+  const kh=c.kl.map(k=>'<div class="klinik-i">\u2022 '+k+'</div>').join('');
+  const q=c.q[qIdx];const ltrs='ABCD';
+  const qh=q.o.map((o,i)=>`<button class="ans" onclick="caseAns(${i})"><span class="ltr">${ltrs[i]}</span><span>${o}</span></button>`).join('');
+  const lvBadge=c.lv==='grund'?'green':c.lv==='basic'?'amber':c.lv==='advanced'?'blue':'red';
+  box.innerHTML=`<div class="case-card fadein"><div class="case-head"><div><div class="case-title">${c.n}</div><div class="case-meta">${c.a}</div></div><div style="display:flex;gap:6px;align-items:center"><span class="badge ${lvBadge}">${c.lv==='grund'?'Grundlage':c.lv.charAt(0).toUpperCase()+c.lv.slice(1)}</span><span class="case-num">${cIdx+1}/${filteredCases.length}</span></div></div><div class="scenario">${c.sc}</div><div class="klinik"><div class="klinik-t">Klinische Befunde</div>${kh}</div><div style="height:12px"></div><div class="vitals">${vh}</div>${bph}</div><div class="qcard fadein"><div class="stag">Frage ${qIdx+1} von ${c.q.length}</div><h3>${q.q}</h3><div class="answers">${qh}</div></div><div id="cfb"></div><div id="csol"></div><div id="cnext" style="display:none" class="controls"><button class="btn primary" onclick="nextStep()">Weiter \u2192</button></div>`;
+}
+function caseAns(i){
+  if(cAnswered)return;cAnswered=true;
+  const c=filteredCases[cIdx],q=c.q[qIdx],ok=i===q.c;
+  cScore.total++;if(ok)cScore.ok++;
+  document.querySelectorAll('.ans').forEach((a,j)=>{a.style.pointerEvents='none';if(j===q.c)a.classList.add('right');if(j===i&&!ok)a.classList.add('wrong')});
+  document.getElementById('cfb').innerHTML=`<div class="fb ${ok?'ok':'no'}"><h4>${ok?'\u2705 Richtig!':'\u274c Nicht ganz'}</h4><p>${q.f}</p></div>`;
+  if(qIdx===c.q.length-1){
+    document.getElementById('csol').innerHTML=`<div class="sol-card fadein"><h3>Vollst\u00e4ndige L\u00f6sung</h3><div class="sol-row"><div class="sol-lb">Leitsymptom</div><div class="sol-vl">${c.s.ls}</div></div><div class="sol-row"><div class="sol-lb">Leitbefund</div><div class="sol-vl">${c.s.lb}</div></div><div class="sol-row"><div class="sol-lb">Diagnose</div><div class="sol-vl">${c.s.dx}</div></div><div class="sol-row"><div class="sol-lb">Therapie</div><div class="sol-vl">${c.s.tx}</div></div></div>`;
+  }
+  document.getElementById('cnext').style.display='flex';
+}
+function nextStep(){qIdx++;if(qIdx>=filteredCases[cIdx].q.length){cIdx++;qIdx=0;renderProg()}renderCase()}
+function showFinal(){
+  go('done');
+  const pct=cScore.total>0?Math.round((cScore.ok/cScore.total)*100):0;
+  let grade,gc;
+  if(pct>=90){grade='Ausgezeichnet!';gc='var(--green)'}else if(pct>=70){grade='Gut gemacht!';gc='var(--blue)'}else if(pct>=50){grade='Solide Basis!';gc='var(--amber)'}else{grade='Weiter \u00fcben!';gc='var(--red)'}
+  document.getElementById('finalScore').innerHTML=`<div class="card" style="text-align:center"><div style="font-size:42px;margin-bottom:8px;color:${gc}">\u2605</div><div style="font-family:'Space Grotesk';font-size:48px;font-weight:800;color:${gc}">${pct}%</div><div style="font-size:15px;font-weight:600;color:${gc};margin:6px 0">${grade}</div><p style="font-size:13px;color:var(--text2)">${cScore.ok} von ${cScore.total} Fragen richtig</p><div class="card" style="text-align:left;background:var(--surface);border:none;margin-top:16px"><h3>3 Take-Aways</h3><p style="margin-bottom:6px"><span class="hl">1. Typ bestimmen:</span> Oxygenierung (Typ I) vs Ventilation (Typ II) \u2014 bestimmt die gesamte Strategie</p><p style="margin-bottom:6px"><span class="hl">2. 5-Schritte-Schema:</span> Pathophysiologie \u2192 Vt \u2192 FiO\u2082 \u2192 PEEP \u2192 Pinsp/AF/I:E</p><p><span class="hl">3. Korrektur nach aBGA:</span> 30 Min warten, Vt pr\u00fcfen, systematisch anpassen!</p></div><div class="controls" style="margin-top:16px"><button class="btn ghost" onclick="cIdx=0;qIdx=0;cScore={ok:0,total:0};go('cases')">\u21bb Nochmal</button><button class="btn primary" onclick="go('start')">\u2190 \u00dcbersicht</button></div></div>`;
+}
+
+// INIT
+load5S();
+loadKorr();
+</script>
+</body>
+</html>
